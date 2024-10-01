@@ -1,4 +1,4 @@
-# Jigw
+# jigw.lua
 
 ---
 

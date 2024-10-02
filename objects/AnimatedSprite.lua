@@ -74,40 +74,100 @@ function AnimatedSprite:update(dt)
 	end
 end
 
+function AnimatedSprite:draw()
+	love.graphics.push()
+	if not self.texture or not self.visible then
+		love.graphics.pop()
+		return
+	end
+	love.graphics.setColor(self.color)
+	if self.currentFrame == nil then
+		love.graphics.draw(self.texture,self.position.x,self.position.y,self.rotation,self.scale.x,self.scale.y)
+	else
+		local currentFrame = self.currentFrame;
+		local _, _, frW, frH = currentFrame.quad:getViewport()
+
+		self.transform:reset();
+		self.transform:translate(self.position:unpack())
+		self.transform:translate(self.offset.x, self.offset.y);
+		self.transform:rotate(self.rotation + currentFrame.rotation);
+		if(self.centered)then
+			self.transform:translate(-frW * 0.5, -frH * 0.5)
+		end
+		love.graphics.draw(self.currentAnimation.tex,currentFrame.quad,self.transform)
+	end
+	love.graphics.setColor(Color.WHITE)
+	love.graphics.pop()
+end
+
+function AnimatedSprite:dispose()
+	for idx,anim in ipairs(self.animations) do
+		for qd,prms in self.animations.quads do
+			if prms.quad.release then prms.quad:release() end
+			prms = nil
+		end
+		anim = nil
+	end
+	self.texture:release()
+	buildAnimatedSprite(self)
+end
+
+function AnimatedSprite:centerPosition(_x_)
+	assert(_x_, "Axis value must be either Axis.X, Axis.Y, or Axis.XY")
+	local vpw, vph = love.graphics.getDimensions()
+	local centerX = _x_ == Axis.X
+	local centerY = _x_ == Axis.Y
+	if(_x_ == Axis.XY)then
+		centerX = true
+		centerY = true
+	end
+	if centerX then self.position.x = vpw* 0.5 end
+	if centerY then self.position.y = vph* 0.5 end
+	self.centered = centerX == true or centerY == true
+end
+
+function AnimatedSprite:getProgress()
+  local cur = self.currentAnimation
+  local progress = math.floor(self.animationProgress / cur.length * #cur.frames) + 1
+	if progress < 1 or progress > cur.length then progress = 1 end
+  return progress;
+end
+
 function AnimatedSprite:loadAtlas(path, animTable)
-	local atlasHelper = require("jigw.util.AtlasSpriteHelper")
-	local animationList = atlasHelper:getAnimationListSparrow(path..".xml")
 	self.texture = love.graphics.newImage(path..".png")
 	if type(animTable) == "table" then
+		local atlasHelper = require("jigw.util.AtlasFrameHelper")
+		local animationList = atlasHelper.getAnimationListSparrow(path..".xml")
 		for i,v in ipairs(animTable) do
-			local x = v[2]
-			self:addAnimationTransform(v[1], animationList[x].frames, v[3])
+			local x = animationList[v[2]].frames
+			local quad = atlasHelper.buildSparrowQuad(x, self.texture)
+			self:addAnimationFromAtlasQuad(v[1],quad,v[3])
 		end
 	end
 	return animationList
 end
 
-function AnimatedSprite:addAnimation(name,x,y,width,height,fps,duration,tex)
-	tex = tex or self.texture
-	if tex == nil then
-		print("Cannot add animation to a texture-less AnimatedSprite.")
-		return nil
-	end
-	local anim = buildAnimation()
-	anim.tex = tex
-	anim.name = name or "default"
-	anim.frameRate = fps or 30
-	for _y = 0, tex:getHeight() - height, height do
-		for _x = 0, tex:getWidth() - width, width do
-			table.insert(anim.frames, love.graphics.newQuad(_x,_y,width,height,tex:getDimensions()))
-		end
-	end
-	anim.length = duration or 1
-	self.animations[name] = anim
-	return anim
-end
+-- function AnimatedSprite:addAnimation(name,x,y,width,height,fps,duration,tex)
+-- 	tex = tex or self.texture
+-- 	if tex == nil then
+-- 		print("Cannot add animation to a texture-less AnimatedSprite.")
+-- 		return nil
+-- 	end
+-- 	local anim = buildAnimation()
+-- 	anim.tex = tex
+-- 	anim.name = name or "default"
+-- 	anim.frameRate = fps or 30
+-- 	for _y = 0, tex:getHeight() - height, height do
+-- 		for _x = 0, tex:getWidth() - width, width do
+-- 			table.insert(anim.frames, love.graphics.newQuad(_x,_y,width,height,tex:getDimensions()))
+-- 		end
+-- 	end
+-- 	anim.length = duration or 1
+-- 	self.animations[name] = anim
+-- 	return anim
+-- end
 
-function AnimatedSprite:addAnimationTransform(name,transform,fps,duration)
+function AnimatedSprite:addAnimationFromAtlasQuad(name,quads,fps,duration)
 	local anim = buildAnimation()
 	anim.tex = self.texture
 	if anim.tex == nil then
@@ -116,24 +176,7 @@ function AnimatedSprite:addAnimationTransform(name,transform,fps,duration)
 	end
 	anim.name = name or "default"
 	anim.frameRate = fps or 30
-
-	for i=1, #transform do
-		local cfg = transform[i]
-		local trimmed = cfg.frameX
-		local frameRect = Rect2(cfg.x,cfg.y,cfg.width,cfg.height)
-		if trimmed then
-			local frameMargin = Rect2(cfg.frameX,cfg.frameY,cfg.frameWidth - frameRect.width,cfg.frameHeight - frameRect.height)
-			if frameMargin.width < math.abs(frameMargin.x) then frameMargin.width = math.abs(frameMargin.x) end
-			if frameMargin.height < math.abs(frameMargin.y) then frameMargin.height = math.abs(frameMargin.y) end
-			Rect2.combine(frameRect,frameMargin)
-		end
-		table.insert(anim.frames, {
-			quad = love.graphics.newQuad(frameRect.x,frameRect.y,frameRect.width,frameRect.height,anim.tex:getDimensions()),
-			offset = not trimmed and Vector2(0, 0) or Vector2(cfg.frameX, cfg.frameY)
-		})
-		--print(Utils.tablePrint(anim.frames))
-	end
-
+	for i=1,#quads do table.insert(anim.frames,quads[i]) end
 	anim.length = duration or #anim.frames or 1
 	self.animations[name] = anim
 	return anim
@@ -158,63 +201,5 @@ function AnimatedSprite:playAnimation(name, forced)
 	end
 end
 
-function AnimatedSprite:dispose()
-	for idx,anim in ipairs(self.animations) do
-		for qd,prms in self.animations.quads do
-			if prms.quad.release then prms.quad:release() end
-			prms = nil
-		end
-		anim = nil
-	end
-	self.texture:release()
-	buildAnimatedSprite(self)
-end
-
-function AnimatedSprite:getProgress()
-  local cur = self.currentAnimation
-  local progress = math.floor(self.animationProgress / cur.length * #cur.frames) + 1
-	if progress < 1 or progress > cur.length then progress = 1 end
-  return progress;
-end
-
-function AnimatedSprite:draw()
-	love.graphics.push()
-	if not self.texture or not self.visible then
-		love.graphics.pop()
-		return
-	end
-	love.graphics.setColor(self.color)
-	if self.currentFrame == nil then
-		love.graphics.draw(self.texture,self.position.x,self.position.y,self.rotation,self.scale.x,self.scale.y)
-	else
-		local currentFrame = self.currentFrame;
-		local _, _, frW, frH = currentFrame.quad:getViewport()
-
-		self.transform:reset();
-		self.transform:translate(self.position:unpack())
-		self.transform:translate(self.offset.x, self.offset.y);
-		self.transform:rotate(self.rotation);
-		if(self.centered)then
-			self.transform:translate(-frW * 0.5, -frH * 0.5)
-		end
-		love.graphics.draw(self.currentAnimation.tex,currentFrame.quad,self.transform)
-	end
-	love.graphics.setColor(Color.WHITE)
-	love.graphics.pop()
-end
-
-function AnimatedSprite:centerPosition(_x_)
-	assert(_x_, "Axis value must be either Axis.X, Axis.Y, or Axis.XY")
-	local vpw, vph = love.graphics.getDimensions()
-	local centerX = _x_ == Axis.X
-	local centerY = _x_ == Axis.Y
-	if(_x_ == Axis.XY)then
-		centerX = true
-		centerY = true
-	end
-	if centerX then self.position.x = vpw* 0.5 end
-	if centerY then self.position.y = vph* 0.5 end
-	self.centered = centerX == true or centerY == true
-end
 
 return AnimatedSprite

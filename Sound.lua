@@ -104,4 +104,8 @@ function Sound.forEachSfx(func)
 	end
 end
 
+function Sound.isMusicPlaying()
+	return Sound.music and Sound.music:isPlaying()
+end
+
 return Sound

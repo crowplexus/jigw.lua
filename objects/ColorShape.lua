@@ -26,11 +26,10 @@ function ColorShape:new(x,y,c,sx,sy)
 end
 
 function ColorShape:draw()
-	love.graphics.push()
 	if not self.visible then
-		love.graphics.pop()
 		return
 	end
+	love.graphics.push("all")
 	love.graphics.setColor(self.color)
 	Utils.match(self.shape, {
 		[1] = function()
@@ -52,7 +51,7 @@ function ColorShape:draw()
 			love.graphics.circle("fill",0,0,-self.size.x,self.size.y)
 		end,
 	})
-	love.graphics.setColor(Color.WHITE)
+	--love.graphics.setColor(Color.WHITE)
 	love.graphics.pop()
 end
 

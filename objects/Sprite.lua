@@ -27,11 +27,10 @@ function Sprite:dispose()
 end
 
 function Sprite:draw()
-	love.graphics.push()
 	if not self.texture or not self.visible then
-		love.graphics.pop()
 		return
 	end
+	love.graphics.push("all")
 	love.graphics.setColor(self.color)
 	local frW, frH = self.texture:getDimensions()
 	love.graphics.translate(self.position:unpack())
@@ -41,7 +40,7 @@ function Sprite:draw()
 		love.graphics.translate(-frW * 0.5, -frH * 0.5)
 	end
 	love.graphics.draw(self.texture,0,0)
-	love.graphics.setColor(Color.WHITE)
+	--love.graphics.setColor(Color.WHITE)
 	love.graphics.pop()
 end
 

@@ -55,11 +55,10 @@ function ProgressShape:getHeight() return self.size.y end
 
 function ProgressShape:draw()
 	-- TODO: image filling?
-	love.graphics.push()
 	if not self.visible then
-		love.graphics.pop()
 		return
 	end
+	love.graphics.push("all")
 	love.graphics.translate(self.position:unpack())
 	love.graphics.rotate(self.rotation)
 	if(self.border and self.border.width > 0) then
@@ -85,7 +84,7 @@ function ProgressShape:drawProgress()
         not vertical and self:getHeight() or fillSize)
     end
   })
-  love.graphics.setColor(Color.WHITE)
+  --love.graphics.setColor(Color.WHITE)
 end
 
 
@@ -99,7 +98,7 @@ function ProgressShape:drawBackground()
       love.graphics.circle("fill",0,0,self:getWidth(),self:getHeight())
     end,
   })
-  love.graphics.setColor(Color.WHITE)
+  --love.graphics.setColor(Color.WHITE)
 end
 
 function ProgressShape:drawBorder()

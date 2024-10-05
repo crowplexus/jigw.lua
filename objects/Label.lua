@@ -20,7 +20,7 @@ function Label:__tostring() return "Label" end
 
 local function _recreateFont(sel)
 	if sel._renderFont then sel._renderFont:release() end
-	sel._renderFont = love.graphics.newFont(sel.fontPath,sel.fontSize,"none")
+	sel._renderFont = love.graphics.newFont(sel.fontPath,sel.fontSize,"light")
 end
 
 local function _isFontPath(p)
@@ -43,11 +43,10 @@ function Label:dispose()
 end
 
 function Label:draw()
-	love.graphics.push()
 	if not self:hasAnyText() or not self.visible then
-		love.graphics.pop()
 		return
 	end
+	love.graphics.push("all")
 	local so = 0
 	local sz = self.strokeSize
 	if self.strokeSize > 0 then
@@ -58,7 +57,7 @@ function Label:draw()
 		local sx = self.scale.x
 		local sy = self.scale.y
 		so = sz
-		for i=1,8 do
+		for i=1,8 do -- not the greatest idea to use print here...
 			love.graphics.print(self.text, self._renderFont, tx + sz, ty + sz + so, tr, sx, sy)
 			love.graphics.print(self.text, self._renderFont, tx + sz + so, ty + sz, tr, sx, sy)
 			love.graphics.print(self.text, self._renderFont, tx + sz - so, ty + sz + so, tr, sx, sy)
@@ -68,9 +67,9 @@ function Label:draw()
 	end
 	love.graphics.setColor(self.color)
 	love.graphics.print(self.text,self._renderFont,
-	self.position.x+sz,self.position.y+sz,
-	self.rotation,self.scale.x,self.scale.y)
-	love.graphics.setColor(Color.WHITE)
+		self.position.x+sz,self.position.y+sz,
+		self.rotation,self.scale.x,self.scale.y)
+	--love.graphics.setColor(Color.WHITE)
 	love.graphics.pop()
 end
 

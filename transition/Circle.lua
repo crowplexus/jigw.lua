@@ -25,7 +25,10 @@ function Transition:draw()
   love.graphics.circle("fill",circX,circY,circS,circS)
   love.graphics.setColor(Color.WHITE)
   if transIn then self:inwards() else self:outwards() end
-  if circS < 0 then finished = true end
+  if circS < 0 then
+		finished = true
+		ScreenHandler.inTransition = false
+	end
 end
 
 function Transition:inwards(force)

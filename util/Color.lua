@@ -25,6 +25,7 @@ local Color = {
   --- @param a number? Alpha Channel Value.
   rgb = function(r,g,b,a)
     if not a or type(a) ~= "number" then a = 255 end
+    --return love.math.colorFromBytes(r,g,b,a)
     return {r/255,g/255,b/255,a/255}
   end,
   --- Returns a color table in RGBA, from 0 to 1

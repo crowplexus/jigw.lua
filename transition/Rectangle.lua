@@ -25,7 +25,10 @@ function Transition:draw()
   love.graphics.rectangle("fill",rectX,rectY,rectS,rectS)
   love.graphics.setColor(Color.WHITE)
   if transIn then self:inwards() else self:outwards() end
-  if rectS < 0 then finished = true end
+  if rectS < 0 then
+		finished = true
+		ScreenHandler.inTransition = false
+	end
 end
 
 function Transition:inwards(force)

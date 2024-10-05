@@ -75,11 +75,10 @@ function AnimatedSprite:update(dt)
 end
 
 function AnimatedSprite:draw()
-	love.graphics.push()
 	if not self.texture or not self.visible then
-		love.graphics.pop()
 		return
 	end
+	love.graphics.push("all")
 	love.graphics.setColor(self.color)
 	if self.currentFrame == nil then
 		love.graphics.draw(self.texture,self.position.x,self.position.y,self.rotation,self.scale.x,self.scale.y)
@@ -96,7 +95,7 @@ function AnimatedSprite:draw()
 		end
 		love.graphics.draw(self.currentAnimation.tex,currentFrame.quad,self.transform)
 	end
-	love.graphics.setColor(Color.WHITE)
+	--love.graphics.setColor(Color.WHITE)
 	love.graphics.pop()
 end
 

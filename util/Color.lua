@@ -1,4 +1,4 @@
---- Utility containing functions and variables to work with colors
+--- Utility containing functions and variables to work with Colors
 --- @class Color
 local Color = {
   BLACK           = {0,0,0,1},
@@ -18,7 +18,7 @@ local Color = {
   PALE_GREEN      = {152/255,251/255,152/255,1},
   GRAY            = {128/255,128/255,128/255,1},
 
-  --- Returns a color table in RGBA, from 0 to 255
+  --- Returns a Color table in RGBA, from 0 to 255
   --- @param r number Red Channel Value.
   --- @param g number Green Channel Value.
   --- @param b number Blue Channel Value.
@@ -28,7 +28,7 @@ local Color = {
     --return love.math.colorFromBytes(r,g,b,a)
     return {r/255,g/255,b/255,a/255}
   end,
-  --- Returns a color table in RGBA, from 0 to 1
+  --- Returns a Color table in RGBA, from 0 to 1
   --- @param r number Red Channel Value.
   --- @param g number Green Channel Value.
   --- @param b number Blue Channel Value.

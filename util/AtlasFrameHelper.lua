@@ -1,7 +1,7 @@
 local AtlasFrameHelper = {}
 
 function AtlasFrameHelper.getAnimationListSparrow(file)
-	local xmldoc, err = require("libraries.xmlparser").parseFile(file)
+	local xmldoc, err = require("jigw.lib.xmlparser").parseFile(file)
 	if err then
 		print("File \""..file.."\" doesn't exist?")
 		return {}

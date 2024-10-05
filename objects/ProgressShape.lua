@@ -21,11 +21,11 @@ function ProgressShape:new(x,y,w,h,colors)
   self.rotation   = 0                               --- @type number
   self.centered   = false                           --- @type boolean
   self.visible    = true                            --- @type boolean
-  self.border     = {width=10,color=Color.BLACK}    --- @type table<number,table>
+  self.border     = {width=10,Color=Color.BLACK}    --- @type table<number,table>
   self.minPercent = 0                               --- @type number minimum percentage value, by default, set to 0
   self.maxPercent = 100                             --- @type number maximum percentage value, by default, set to 100
   self.percentage = 0                               --- @type number percentage of the progress bar, ranging from 0 to `self.maxValue`
-  self.fillMode   = ProgressFill.LTR                --- @type ProgressFill|number used to denominate where the progress color of the bar should go
+  self.fillMode   = ProgressFill.LTR                --- @type ProgressFill|number used to denominate where the progress Color of the bar should go
   self.shape      = ShapeType.RECTANGLE             --- @type ShapeType|number Type of shape that the progress shape will display as.
   return self
 end

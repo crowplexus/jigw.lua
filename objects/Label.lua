@@ -15,16 +15,16 @@ local function _recreateFont(sel)
 end
 
 function Label:new(x,y,text,size)
-	self.text = text or nil
-	self.fontPath = nil
-	self._renderFont = nil
-	self.fontSize = size or 14
 	self.position = Vector2(x,y)
 	self.size = Vector2(0,0)
 	self.scale = Vector2(1,1)
+	self.text = text or nil
+	self.fontSize = size or 14
+	self._renderFont = nil
 	self.strokeSize = 0
-	self.strokeColor = Color.BLACK()
+	self.fontPath = nil
 	self.color = Color.WHITE()
+	self.strokeColor = Color.BLACK()
 	self.visible = true
 	self.rotation = 0
 	self.alpha = 1.0
@@ -38,15 +38,16 @@ function Label:dispose()
 		end
 		self._renderFont = nil
 	end
-	self.text = nil
-	self.fontPath = nil
-	self.fontSize = nil
 	self.position = nil
 	self.size = nil
 	self.scale = nil
+	self.text = nil
+	self.fontSize = nil
+	self._renderFont = nil
 	self.strokeSize = nil
-	self.strokeColor = nil
+	self.fontPath = nil
 	self.color = nil
+	self.strokeColor = nil
 	self.visible = nil
 	self.rotation = nil
 	self.alpha = nil
@@ -115,8 +116,12 @@ function Label:centerPosition(_x_)
 end
 
 --#region Getters and Setters
-function Label:get_alpha() return self.color[4] end
-function Label:set_alpha(vl) self.color[4] = vl end
+function Label:get_alpha()
+	return self.color[4]
+end
+function Label:set_alpha(vl)
+	if self.color then self.color[4] = vl end
+end
 --#endregion
 
 return Label

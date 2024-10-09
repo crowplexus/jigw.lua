@@ -46,8 +46,12 @@ function Sprite:draw()
 end
 
 --#region Getters and Setters
-function Sprite:get_alpha() return self.color[4] end
-function Sprite:set_alpha(vl) self.color[4] = vl end
+function Sprite:get_alpha()
+	return self.color[4]
+end
+function Sprite:set_alpha(vl)
+	if self.color then self.color[4] = vl end
+end
 --#endregion
 
 function Sprite:centerPosition(_x_)

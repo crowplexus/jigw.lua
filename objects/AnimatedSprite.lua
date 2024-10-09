@@ -200,5 +200,13 @@ function AnimatedSprite:playAnimation(name, forced)
 	end
 end
 
+--#region Getters and Setters
+function AnimatedSprite:get_alpha()
+	return self.color[4]
+end
+function AnimatedSprite:set_alpha(vl)
+	if self.color then self.color[4] = vl end
+end
+--#endregion
 
 return AnimatedSprite

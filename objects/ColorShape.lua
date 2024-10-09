@@ -14,6 +14,7 @@ local function buildColorShape(sel)
   sel.visible = true
   sel.centered = false
   sel.rotation = 0
+	sel.alpha = 1.0
   return sel
 end
 
@@ -35,6 +36,7 @@ function ColorShape:dispose()
   self.visible = nil
   self.centered = nil
   self.rotation = nil
+	self.alpha = nil
 end
 
 function ColorShape:draw()
@@ -80,5 +82,15 @@ function ColorShape:centerPosition(_x_)
 	if centerY then self.position.y = vph* 0.5 end
   self.centered = centerX == true or centerY == true
 end
+
+
+--#region Getters and Setters
+function ColorShape:get_alpha()
+	return self.color[4]
+end
+function ColorShape:set_alpha(vl)
+	if self.color then self.color[4] = vl end
+end
+--#endregion
 
 return ColorShape

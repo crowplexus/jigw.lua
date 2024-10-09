@@ -5,37 +5,29 @@ ShapeType = {
 }
 
 local ColorShape = Object:extend() --- @class ColorShape
-local function buildColorShape(sel)
-  sel.position = Vector2(0,0)
-  sel.size = Vector2(0,0)
-  sel.cornerRadius = Vector2(0,0)
-  sel.color = Color.WHITE()
-  sel.shape = ShapeType.RECTANGLE
-  sel.visible = true
-  sel.centered = false
-  sel.rotation = 0
-	sel.alpha = 1.0
-  return sel
-end
 
 function ColorShape:new(x,y,c,sx,sy)
-  buildColorShape(ColorShape)
-  if type(c) ~= "table" then c = Color.WHITE() end
-  self.position = Vector2(x,y)
+	self.position = Vector2(x,y)
+  self.cornerRadius = Vector2(0,0)
   self.size = Vector2(sx or 50,sy or 50)
-  self.color = c
+  self.color = c or Color.WHITE()
+  self.shape = ShapeType.RECTANGLE
+  self.visible = true
+  self.centered = false
+  self.rotation = 0
+	self.alpha = 1.0
   return self
 end
 
 function ColorShape:dispose()
   self.position = nil
-  self.cornerRadius = nil
-  self.size = nil
-  self.color = nil
-  self.shape = nil
-  self.visible = nil
-  self.centered = nil
-  self.rotation = nil
+	self.cornerRadius = nil
+	self.size = nil
+	self.color = nil
+	self.shape = nil
+	self.visible = nil
+	self.centered = nil
+	self.rotation = nil
 	self.alpha = nil
 end
 

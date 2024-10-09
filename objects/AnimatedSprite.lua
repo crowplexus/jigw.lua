@@ -5,28 +5,6 @@ local AnimationRepeat = {
 	TO_FRAME = 2,
 }
 
-local function buildAnimatedSprite(sel)
-	sel.position = Vector2(0,0) -- X, Y
-	sel.offset = Vector2(0, 0)
-	sel.scale = Vector2(1,1)
-	sel.color = Color.WHITE()
-	sel.centered = true
-	sel.visible = true
-	sel.rotation = 0
-	sel.alpha = 1.0
-	sel.animations = {}
-	sel.animation = {
-		name = "default",
-		progress = 0
-	}
-  sel.transform = love.math.newTransform()
-	sel.currentAnimation = nil
-  sel.currentFrame = nil;
-	sel.animationProgress = 0
-	sel.texture = nil
-	return sel
-end
-
 local function buildAnimation()
 	return {
 		name = "default",
@@ -46,9 +24,24 @@ local AnimatedSprite = Object:extend() --- @class AnimatedSprite
 function AnimatedSprite:__tostring() return "AnimatedSprite" end
 
 function AnimatedSprite:new(x,y,tex)
-	buildAnimatedSprite(self)
-	self.position.x = x
-	self.position.y = y
+	self.position = Vector2(x,y) -- X, Y
+	self.offset = Vector2(0, 0)
+	self.scale = Vector2(1,1)
+	self.color = Color.WHITE()
+	self.centered = true
+	self.visible = true
+	self.rotation = 0
+	self.alpha = 1.0
+	self.animations = {}
+	self.animation = {
+		name = "default",
+		progress = 0
+	}
+  self.transform = love.math.newTransform()
+	self.currentAnimation = nil
+  self.currentFrame = nil;
+	self.animationProgress = 0
+	self.texture = nil
 	if tex then self.texture = tex end
 end
 
@@ -107,8 +100,25 @@ function AnimatedSprite:dispose()
 		end
 		anim = nil
 	end
-	self.texture:release()
-	buildAnimatedSprite(self)
+	if self.texture ~= nil then
+		if self.texture.release then self.texture:release() end
+		self.texture = nil
+	end
+	self.position = nil
+	self.offset = nil
+	self.scale = nil
+	self.color = nil
+	self.centered = nil
+	self.visible = nil
+	self.rotation = nil
+	self.alpha = nil
+	self.animations = nil
+	self.animation = nil
+	self.transform = nil
+	self.currentAnimation = nil
+	self.currentFrame = nil
+	self.animationProgress = nil
+	self.texture = nil
 end
 
 function AnimatedSprite:centerPosition(_x_)

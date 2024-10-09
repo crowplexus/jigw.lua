@@ -7,9 +7,12 @@ function Timer:__tostring() return "Timer" end
 function Timer:new()
   self.duration       = 0     --- @type number
   self.loops          = 0     --- @type number
-  self.startCallback  = nil   --- @type function
-  self.updateCallback = nil   --- @type function
-  self.finishCallback = nil   --- @type fun(timer: Timer)
+  self.callbacks      = {
+    start  = false,
+    update = false,
+    finish = false,
+  }   --- @type table<fun(timer: Timer)>
+
   self.finished       = false --- @type boolean
   self.progress       = 0;    --- @type number
   self._deltaTime     = 0     --- @type number
@@ -25,15 +28,12 @@ function Timer:stop()
   self.loops = 0
   self.progress = 0;
   self._deltaTime = 0.0
-  -- clear functions
-  self.startCallback = nil
-  self.updateCallback = nil
-  self.finishCallback = nil
+  self.options = nil
 end
 
 function Timer:runFinishCallback()
-  if type(self.finishCallback) == "function" then
-    self.finishCallback(self)
+  if self.callbacks and type(self.callbacks.finish) == "function" then
+    self.callbacks.finish(self)
   end
 end
 
@@ -55,23 +55,32 @@ function Timer:update(dt)
       self:stop()
       return
     end
-    --#endregion
   end
 
   if self.progress <= 1 then
     self._deltaTime = self._deltaTime + dt
+    if self.callbacks and type(self.callbacks.update) == "function" then
+      self.callbacks.update(self)
+    end
   end
 end
 
 
 --- Starts the timer
---- @param duration number    duration of the timer.
---- @param cfinish function   function to call after the timer ends.
---- @param loops number?      how many times should the timer loop before ending.
---- @param oneshot boolean?   if the timer should destroy on finish
-function Timer:start(duration, cfinish, loops, oneshot)
+--- @param duration number                 duration of the timer.
+--- @param calls table<fun(timer: Timer)>  function to call after the timer ends, assumes finishCallback if a function is passed instead.
+--- @param loops number?                   how many times should the timer loop before ending.
+--- @param oneshot boolean?                if the timer should destroy on finish
+function Timer:start(duration, calls, loops, oneshot)
   assert(duration, "Timer:start expects a duration!");
-  self.finishCallback = cfinish
+  if type(calls) == "table" then
+    if calls.start and type(calls.start) == "function" then self.callbacks.start = calls.start end
+    if calls.update and type(calls.update) == "function" then self.callbacks.update = calls.update end
+    if calls.finish and type(calls.finish) == "function" then self.callbacks.finish = calls.finish end
+  end
+  if type(calls) == "function" then
+    self.callbacks.finish = calls
+  end
   self.duration = duration
   self.loops = loops or 0
   self.finished = false;
@@ -81,19 +90,22 @@ function Timer:start(duration, cfinish, loops, oneshot)
 
   if not table.has(_G.GlobalTimers, self)then
     table.insert(_G.GlobalTimers, self)
+    if self.callbacks and type(self.callbacks.start) == "function" then
+      self.callbacks.start(self)
+    end
   end
   return self;
 end
 
 --- Creates a new timer and starts it.
---- @param duration number    duration of the timer.
---- @param cfinish function   function to call after the timer ends.
---- @param loops number?      how many times should the timer loop before ending.
---- @param oneshot boolean?   if the timer should destroy on finish
-function Timer.create(duration, cfinish, loops, oneshot)
+--- @param duration number                  duration of the timer.
+--- @param calls table<fun(timer: Timer)>   functions to call after the timer starts, updates, and ends respectively, assumes finishCallback if a function is passed instead.
+--- @param loops number?                    how many times should the timer loop before ending.
+--- @param oneshot boolean?                 if the timer should destroy on finish
+function Timer.create(duration, calls, loops, oneshot)
   assert(duration, "Timer.create expects a duration!");
   local t = Timer()
-  return t:start(duration, cfinish, loops, oneshot)
+  return t:start(duration, calls, loops, oneshot)
   --return t
 end
 

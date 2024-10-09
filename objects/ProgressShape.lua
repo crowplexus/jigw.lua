@@ -30,6 +30,21 @@ function ProgressShape:new(x,y,w,h,colors)
   return self
 end
 
+function ProgressShape:dispose()
+  self.position   = nil
+  self.size       = nil
+  self.colors     = nil
+  self.rotation   = nil
+  self.centered   = nil
+  self.visible    = nil
+  self.border     = nil
+  self.minPercent = nil
+  self.maxPercent = nil
+  self.percentage = nil
+  self.fillMode   = nil
+  self.shape      = nil
+end
+
 local function _isVertical(self)
   return self.fillMode == ProgressFill.TTB or self.fillMode == ProgressFill.BTT
 end

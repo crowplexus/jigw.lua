@@ -1,7 +1,7 @@
 local function buildLabel(sel)
 	sel.text = nil
+	sel.fontPath = nil
 	sel.fontSize = 14
-	sel.fontPath = "assets/fonts/vcr.ttf"
 	sel.position = Vector2(0,0)
 	sel.zAsLayer = true
 	sel.size = Vector2(0,0)
@@ -18,13 +18,17 @@ end
 local Label = Object:extend() --- @class Label
 function Label:__tostring() return "Label" end
 
-local function _recreateFont(sel)
-	if sel._renderFont then sel._renderFont:release() end
-	sel._renderFont = love.graphics.newFont(sel.fontPath,sel.fontSize,"light")
-end
-
 local function _isFontPath(p)
 	return p and type(p) == "string" and (p:sub(#".ttf") or p:sub(#".otf"))
+end
+
+local function _recreateFont(sel)
+	if sel._renderFont then sel._renderFont:release() end
+	if _isFontPath(sel.fontPath) and love.filesystem.getInfo(sel.fontPath).type == "file" then
+		sel._renderFont = love.graphics.newFont(sel.fontPath,sel.fontSize,"light")
+	else
+		sel._renderFont = love.graphics.getFont()
+	end
 end
 
 function Label:new(x,y,text,size)
@@ -77,12 +81,9 @@ function Label:hasAnyText()
 	return type(self.text) == "string" and string.len(self.text) ~= 0
 end
 
-function Label:changeFont(path)
-	local fi = love.filesystem.getInfo(path)
-	if _isFontPath(path) and fi and fi.size and self.fontPath ~= path then
-		self.fontPath = path
-		_recreateFont(self)
-	end
+function Label:changeFontFromPath(path)
+	self.fontPath = path
+	_recreateFont(self)
 end
 
 function Label:changeFontSize(newSize, force)

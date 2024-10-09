@@ -1,6 +1,6 @@
 local ScreenHandler = {
   __name = "Screen Handler",
-  activeScreen = nil, --- @class Screen
+  activeScreen = nil, --- @class jigw.Screen
   transition = nil,
   skipNextTransIn = false,
   skipNextTransOut = false,
@@ -11,7 +11,7 @@ local ScreenHandler = {
 --- @param modname string      Next screen module name
 function ScreenHandler:switchScreen(modname)
   local nextScreen = require(modname)
-  
+
   -- in case the transition isn't set
   if not ScreenHandler.skipTransitions() and ScreenHandler.transition == nil then
     ScreenHandler.transition = DefaultScreenTransition

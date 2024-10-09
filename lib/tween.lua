@@ -337,6 +337,9 @@ function Tween:set(clock)
 
   end
 
+  if self.callbacks and self.callbacks.updateCallback and type(self.callbacks.updateCallback) == "function" then
+    self.callbacks.updateCallback()
+  end
   return self.clock >= self.duration
 end
 
@@ -352,23 +355,36 @@ end
 
 -- Public interface
 
-function tween.new(duration, subject, target, easing)
+function tween.new(duration, subject, target, easing, calls)
   easing = getEasingFunction(easing)
   checkNewParams(duration, subject, target, easing)
+  local cbs = {
+    start  = false,
+    update = false,
+    finish = false,
+  }
+  if type(calls) == "table" then
+    if calls.start and type(calls.start)   == "function" then cbs.start  = calls.start  end
+    if calls.update and type(calls.update) == "function" then cbs.update = calls.update end
+    if calls.finish and type(calls.finish) == "function" then cbs.finish = calls.finish end
+  end
+  if type(calls) == "function" then cbs.finish = calls end
+
   local t = setmetatable({
     duration  = duration,
     subject   = subject,
     target    = target,
     easing    = easing,
-    clock     = 0
+    callbacks = cbs,
+    clock     = 0,
   }, Tween_mt)
   table.insert(_G.GlobalTweens,t)
   return tween
 end
 
 --- alias to: tween.new()
-function tween.create(duration,subject,target,easing)
-  return tween.new(duration,subject,target,easing)
+function tween.create(duration,subject,target,easing,calls)
+  return tween.new(duration,subject,target,easing,calls)
 end
 
 return tween

@@ -8,6 +8,7 @@ local ColorShape = Object:extend() --- @class ColorShape
 local function buildColorShape(sel)
   sel.position = Vector2(0,0)
   sel.size = Vector2(0,0)
+  sel.cornerRadius = Vector2(0,0)
   sel.color = Color.WHITE
   sel.shape = ShapeType.RECTANGLE
   sel.visible = true
@@ -25,6 +26,17 @@ function ColorShape:new(x,y,c,sx,sy)
   return self
 end
 
+function ColorShape:dispose()
+  self.position = nil
+  self.cornerRadius = nil
+  self.size = nil
+  self.color = nil
+  self.shape = nil
+  self.visible = nil
+  self.centered = nil
+  self.rotation = nil
+end
+
 function ColorShape:draw()
 	if not self.visible then
 		return
@@ -39,7 +51,7 @@ function ColorShape:draw()
 			if(self.centered)then
 				love.graphics.translate(-frW * 0.5, -frH * 0.5)
 			end
-			love.graphics.rectangle("fill",0,0,self.size.x,self.size.y)
+			love.graphics.rectangle("fill",0,0,self.size.x,self.size.y,self.cornerRadius.x,self.cornerRadius.y)
 		end,
 		[2] = function()
 			--local frW, frH = self.size:unpack()

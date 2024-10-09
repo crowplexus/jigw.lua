@@ -1,22 +1,15 @@
 local Sprite = Object:extend() --- @class Sprite
 function Sprite:__tostring() return "Sprite" end
-local function buildSprite(sel)
-	sel.position = Vector2(0,0) -- X, Y
-	sel.scale = Vector2(1,1)
-	sel.color = Color.WHITE
-	sel.visible = true
-	sel.centered = false;
-	sel.texture = nil
-	sel.rotation = 0
-	sel.alpha = 1.0
-	return sel
-end
 
 function Sprite:new(x,y,tex)
-	buildSprite(self)
-	self.position.x = x
-	self.position.y = y
-	if tex then self.texture = tex end
+	self.position = Vector2(x,y) -- X, Y
+	self.scale = Vector2(1,1)
+	self.color = Color.WHITE()
+	self.visible = true
+	self.centered = false;
+	self.texture = tex or nil
+	self.rotation = 0
+	self.alpha = 1.0
 end
 
 function Sprite:dispose()
@@ -24,6 +17,14 @@ function Sprite:dispose()
 		self.texture:release()
 		self.texture = nil
 	end
+	self.position = nil
+	self.scale = nil
+	self.color = nil
+	self.visible = nil
+	self.centered = nil;
+	self.texture = nil
+	self.rotation = nil
+	self.alpha = nil
 end
 
 function Sprite:draw()
@@ -40,7 +41,7 @@ function Sprite:draw()
 		love.graphics.translate(-frW * 0.5, -frH * 0.5)
 	end
 	love.graphics.draw(self.texture,0,0)
-	--love.graphics.setColor(Color.WHITE)
+	--love.graphics.setColor(Color.WHITE())
 	love.graphics.pop()
 end
 

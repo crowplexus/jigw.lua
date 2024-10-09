@@ -13,7 +13,7 @@ function ProgressShape:__tostring() return "ProgressShape" end
 
 function ProgressShape:new(x,y,w,h,colors)
   if colors == nil or #colors < 2 then
-    colors = {Color.WHITE, Color.BLACK}
+    colors = {Color.WHITE(), Color.BLACK()}
   end
   self.position   = Vector2(x,y)                    --- @class Vector2
   self.size       = Vector2(w or 590,h or 10)       --- @class Vector2
@@ -21,7 +21,7 @@ function ProgressShape:new(x,y,w,h,colors)
   self.rotation   = 0                               --- @type number
   self.centered   = false                           --- @type boolean
   self.visible    = true                            --- @type boolean
-  self.border     = {width=10,Color=Color.BLACK}    --- @type table<number,table>
+  self.border     = {width=10,Color=Color.BLACK()}  --- @type table<number,table>
   self.minPercent = 0                               --- @type number minimum percentage value, by default, set to 0
   self.maxPercent = 100                             --- @type number maximum percentage value, by default, set to 100
   self.percentage = 0                               --- @type number percentage of the progress bar, ranging from 0 to `self.maxValue`
@@ -73,7 +73,7 @@ function ProgressShape:draw()
 	if not self.visible then
 		return
 	end
-	love.graphics.push("all")
+	love.graphics.push()
 	love.graphics.translate(self.position:unpack())
 	love.graphics.rotate(self.rotation)
 	if(self.border and self.border.width > 0) then
@@ -99,7 +99,7 @@ function ProgressShape:drawProgress()
         not vertical and self:getHeight() or fillSize)
     end
   })
-  --love.graphics.setColor(Color.WHITE)
+  --love.graphics.setColor(Color.WHITE())
 end
 
 
@@ -113,11 +113,11 @@ function ProgressShape:drawBackground()
       love.graphics.circle("fill",0,0,self:getWidth(),self:getHeight())
     end,
   })
-  --love.graphics.setColor(Color.WHITE)
+  --love.graphics.setColor(Color.WHITE())
 end
 
 function ProgressShape:drawBorder()
-  love.graphics.setColor(self.border.color or Color.BLACK)
+  love.graphics.setColor(self.border.color or Color.BLACK())
   love.graphics.setLineWidth(self.border.width)
   Utils.match(self.shape, {
     [ShapeType.RECTANGLE] = function()

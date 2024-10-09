@@ -4,7 +4,7 @@ function Camera:new(x,y)
 	local sz = Vector2(love.graphics.getWidth(),love.graphics.getHeight())
   self._subCanvas = love.graphics.newCanvas(sz.x, sz.y) --- @class love.Canvas
   self.position = Vector2(x,y) --- @class Vector2
-	self.color = Color.WHITE --- @class Color
+	self.color = Color.WHITE() --- @class Color
   self.rotation = 0 --- @type number
 
   -- I kinda wanna do like layers with properties

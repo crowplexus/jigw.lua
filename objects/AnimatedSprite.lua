@@ -9,7 +9,7 @@ local function buildAnimatedSprite(sel)
 	sel.position = Vector2(0,0) -- X, Y
 	sel.offset = Vector2(0, 0)
 	sel.scale = Vector2(1,1)
-	sel.color = Color.WHITE
+	sel.color = Color.WHITE()
 	sel.centered = true
 	sel.visible = true
 	sel.rotation = 0

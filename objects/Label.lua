@@ -1,20 +1,3 @@
-local function buildLabel(sel)
-	sel.text = nil
-	sel.fontPath = nil
-	sel.fontSize = 14
-	sel.position = Vector2(0,0)
-	sel.zAsLayer = true
-	sel.size = Vector2(0,0)
-	sel.scale = Vector2(1,1)
-	sel.strokeSize = 0
-	sel.strokeColor = Color.BLACK
-	sel.color = Color.WHITE
-	sel.visible = true
-	sel.rotation = 0
-	sel.alpha = 1.0
-	return sel
-end
-
 local Label = Object:extend() --- @class Label
 function Label:__tostring() return "Label" end
 
@@ -32,35 +15,57 @@ local function _recreateFont(sel)
 end
 
 function Label:new(x,y,text,size)
-	buildLabel(self)
-	self.position.x = x
-	self.position.y = y
 	self.text = text or nil
-	self.fontSize = size or 14
+	self.fontPath = nil
 	self._renderFont = nil
+	self.fontSize = size or 14
+	self.position = Vector2(x,y)
+	self.size = Vector2(0,0)
+	self.scale = Vector2(1,1)
+	self.strokeSize = 0
+	self.strokeColor = Color.BLACK()
+	self.color = Color.WHITE()
+	self.visible = true
+	self.rotation = 0
+	self.alpha = 1.0
 	self:changeFontSize(size,true)
 end
 
 function Label:dispose()
-	self._renderFont:release()
-	buildLabel(self)
+	if self._renderFont ~= nil then
+		if self._renderFont.release then
+			self._renderFont:release()
+		end
+		self._renderFont = nil
+	end
+	self.text = nil
+	self.fontPath = nil
+	self.fontSize = nil
+	self.position = nil
+	self.size = nil
+	self.scale = nil
+	self.strokeSize = nil
+	self.strokeColor = nil
+	self.color = nil
+	self.visible = nil
+	self.rotation = nil
+	self.alpha = nil
 end
 
 function Label:draw()
 	if not self:hasAnyText() or not self.visible then
 		return
 	end
-	love.graphics.push("all")
-	local so = 0
 	local sz = self.strokeSize
-	if self.strokeSize > 0 then
-		love.graphics.setColor(self.strokeColor)
+	local drawStroke = function()
+		local so = 0
 		local tx = self.position.x
 		local ty = self.position.y
 		local tr = self.rotation
 		local sx = self.scale.x
 		local sy = self.scale.y
 		so = sz
+		love.graphics.setColor(self.strokeColor)
 		for i=1,8 do -- not the greatest idea to use print here...
 			love.graphics.print(self.text, self._renderFont, tx + sz, ty + sz + so, tr, sx, sy)
 			love.graphics.print(self.text, self._renderFont, tx + sz + so, ty + sz, tr, sx, sy)
@@ -69,12 +74,11 @@ function Label:draw()
 			so = -so
 		end
 	end
+	if self.strokeSize > 0 then drawStroke() end
 	love.graphics.setColor(self.color)
 	love.graphics.print(self.text,self._renderFont,
 		self.position.x+sz,self.position.y+sz,
 		self.rotation,self.scale.x,self.scale.y)
-	--love.graphics.setColor(Color.WHITE)
-	love.graphics.pop()
 end
 
 function Label:hasAnyText()

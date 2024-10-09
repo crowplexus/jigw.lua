@@ -38,6 +38,28 @@ function Boot.init()
 
 	--}
 
+	love.graphics.reset()
+	love.graphics.setCanvas()
+	love.graphics.setColor(1,1,1,1)
+	love.graphics.origin()
+
+	if love.mouse then
+		love.mouse.setVisible(true)
+		love.mouse.setGrabbed(false)
+		love.mouse.setRelativeMode(false)
+		if love.mouse.isCursorSupported() then love.mouse.setCursor() end
+	end
+	if love.joystick then
+		for i, v in ipairs(love.joystick.getJoysticks()) do
+			v:setVibration()
+		end
+	end
+	if love.window then
+		love.window.setFullscreen(false)
+		love.window.setDisplaySleepEnabled(true)
+	end
+	if love.audio then love.audio.stop() end
+
 	return _G.JIGW_VERSION ~= nil and true or false
 end
 

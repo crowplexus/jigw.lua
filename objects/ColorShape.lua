@@ -9,7 +9,7 @@ local function buildColorShape(sel)
   sel.position = Vector2(0,0)
   sel.size = Vector2(0,0)
   sel.cornerRadius = Vector2(0,0)
-  sel.color = Color.WHITE
+  sel.color = Color.WHITE()
   sel.shape = ShapeType.RECTANGLE
   sel.visible = true
   sel.centered = false
@@ -19,7 +19,7 @@ end
 
 function ColorShape:new(x,y,c,sx,sy)
   buildColorShape(ColorShape)
-  if type(c) ~= "table" then c = Color.WHITE end
+  if type(c) ~= "table" then c = Color.WHITE() end
   self.position = Vector2(x,y)
   self.size = Vector2(sx or 50,sy or 50)
   self.color = c
@@ -63,7 +63,7 @@ function ColorShape:draw()
 			love.graphics.circle("fill",0,0,-self.size.x,self.size.y)
 		end,
 	})
-	--love.graphics.setColor(Color.WHITE)
+	love.graphics.setColor(Color.WHITE())
 	love.graphics.pop()
 end
 

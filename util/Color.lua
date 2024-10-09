@@ -1,22 +1,22 @@
 --- Utility containing functions and variables to work with Colors
 --- @class Color
 local Color = {
-  BLACK           = {0,0,0,1},
-  WHITE           = {1,1,1,1},
-  RED             = {1,0,0,1},
-  GREEN           = {0,1,0,1},
-  BLUE            = {0,0,1,1},
-  YELLOW          = {1,1,0,1},
-  ORANGE          = {1,128/255,0,1},
-  CYAN            = {0,1,1,1},
-  PINK            = {1,192/255,203/255,1},
-  BROWN           = {139/255,69/255,19/255,1},
-  MAGENTA         = {1,0,1,1},
-  LAVENDER        = {230/255,230/255,250/255,1},
-  INDIGO          = {75/255,0,130/255,1},
-  GREEN_YELLOW    = {173/255,1,47/255,1},
-  PALE_GREEN      = {152/255,251/255,152/255,1},
-  GRAY            = {128/255,128/255,128/255,1},
+  BLACK           = function() return {0,0,0,1} end,
+  WHITE           = function() return {1,1,1,1} end,
+  RED             = function() return {1,0,0,1} end,
+  GREEN           = function() return {0,1,0,1} end,
+  BLUE            = function() return {0,0,1,1} end,
+  YELLOW          = function() return {1,1,0,1} end,
+  ORANGE          = function() return {1,128/255,0,1} end,
+  CYAN            = function() return {0,1,1,1} end,
+  PINK            = function() return {1,192/255,203/255,1} end,
+  BROWN           = function() return {139/255,69/255,19/255,1} end,
+  MAGENTA         = function() return {1,0,1,1} end,
+  LAVENDER        = function() return {230/255,230/255,250/255,1} end,
+  INDIGO          = function() return {75/255,0,130/255,1} end,
+  GREEN_YELLOW    = function() return {173/255,1,47/255,1} end,
+  PALE_GREEN      = function() return {152/255,251/255,152/255,1} end,
+  GRAY            = function() return {128/255,128/255,128/255,1} end,
 
   --- Returns a Color table in RGBA, from 0 to 255
   --- @param r number Red Channel Value.

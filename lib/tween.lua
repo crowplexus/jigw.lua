@@ -374,8 +374,7 @@ function tween.new(duration, subject, target, easing, calls)
   end
   if type(calls) == "function" then cbs.finish = calls end
 
-  -- Ideally we'd want to reuse tweens if the subject is the same as one from a tween
-  -- that already has that subject bound to it...
+  -- Ideally we'd want to reuse tweens if the subject matches a previously set one
   -- TODO: reuse tweens whenever possible.
 
   local t = setmetatable({

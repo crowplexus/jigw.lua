@@ -246,6 +246,9 @@ tween.easing = {
 -- private stuff
 
 local function copyTables(destination, keysTable, valuesTable)
+  if not keysTable or type(keysTable) ~= "table" then
+    return
+  end
   valuesTable = valuesTable or keysTable
   local mt = getmetatable(keysTable)
   if mt and getmetatable(destination) == nil then
@@ -322,15 +325,11 @@ function Tween:set(clock)
   self.clock = clock
 
   if self.clock <= 0 then
-
     self.clock = 0
     copyTables(self.subject, self.initial)
-
   elseif self.clock >= self.duration then -- the tween has expired
-
     self.clock = self.duration
     copyTables(self.subject, self.target)
-
   else
 
     performEasingOnSubject(self.subject, self.target, self.initial, self.clock, self.duration, self.easing)
@@ -345,6 +344,11 @@ end
 
 function Tween:reset()
   return self:set(0)
+end
+
+function Tween:cancel()
+  --self:set(0)
+  self.cancelled = true
 end
 
 function Tween:update(dt)
@@ -370,6 +374,10 @@ function tween.new(duration, subject, target, easing, calls)
   end
   if type(calls) == "function" then cbs.finish = calls end
 
+  -- Ideally we'd want to reuse tweens if the subject is the same as one from a tween
+  -- that already has that subject bound to it...
+  -- TODO: reuse tweens whenever possible.
+
   local t = setmetatable({
     duration  = duration,
     subject   = subject,
@@ -377,14 +385,28 @@ function tween.new(duration, subject, target, easing, calls)
     easing    = easing,
     callbacks = cbs,
     clock     = 0,
+    cancelled = false,
   }, Tween_mt)
-  table.insert(_G.GlobalTweens,t)
+  table.insert(_G.GlobalTweens,{subject=subject,instance=t})
   return tween
 end
 
 --- alias to: tween.new()
 function tween.create(duration,subject,target,easing,calls)
   return tween.new(duration,subject,target,easing,calls)
+end
+
+function tween.cancelTweensIn(subject)
+  local i = 1
+  while i <= #_G.GlobalTweens do
+    local v = _G.GlobalTweens[i]
+    if subject == v.subject and not subject.cancelled then
+      table.remove(_G.GlobalTweens,i)
+      Tween:cancel()
+      break
+    end
+    i = i + 1
+  end
 end
 
 return tween

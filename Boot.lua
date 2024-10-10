@@ -83,12 +83,18 @@ function Boot.update(dt)
 	if Tween and #_G.GlobalTweens ~= 0 then
 		local i = 1;
 		while i <= #_G.GlobalTweens do
+			local skip = false
 			local tween = _G.GlobalTweens[i];
-			tween:update(dt);
-			if (_G.GlobalTweens[i].clock >= _G.GlobalTweens[i].duration) then
-				table.remove(_G.GlobalTweens, i);
-				--print('removed tween at ', i)
-				return;
+			if tween.cancelled == true then
+				skip = true
+			end
+			if not skip then
+				tween.instance:update(dt);
+				if (tween.instance.clock >= tween.instance.duration) then
+					table.remove(_G.GlobalTweens, i);
+					--print('removed tween at ', i)
+					return
+				end
 			end
 			i = i + 1;
 		end

@@ -1,4 +1,9 @@
 --- @return boolean
+function string:first(pattern)
+  return self:find("^"..pattern) ~= nil;
+end
+
+--- @return boolean
 function string:last(pattern)
   return (self:sub(#self - #pattern + 1, #self) == pattern);
 end

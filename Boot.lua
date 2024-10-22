@@ -28,9 +28,10 @@ function Boot.init()
 		Rectangle = require("jigw.transition.Rectangle"),
 	}
 	DefaultScreenTransition = ScreenTransitions.Circle
+	InputManager = require("jigw.managers.InputManager")
 
 	Color = require("jigw.util.Color")           --- @class jigw.Color
-	ScreenHandler = require("jigw.ScreenHandler") --- @class jigw.ScreenHandler
+	ScreenManager = require("jigw.managers.ScreenManager") --- @class jigw.ScreenManager
 	Utils = require("jigw.util.EngineUtils")     --- @class jigw.Utils
 	Timer = require("jigw.util.Timer")           --- @class jigw.Timer
 	Tween = require("jigw.lib.tween")            --- @class jigw.Tween
@@ -64,9 +65,9 @@ function Boot.init()
 end
 
 function Boot.update(dt)
-	local screenPaused = ScreenHandler.inTransition
-	if not screenPaused and ScreenHandler:isScreenOperating() and ScreenHandler.activeScreen.update then
-		ScreenHandler.activeScreen:update(dt)
+	local screenPaused = ScreenManager.inTransition
+	if not screenPaused and ScreenManager:isScreenOperating() and ScreenManager.activeScreen.update then
+		ScreenManager.activeScreen:update(dt)
 	end
 	if Timer and #_G.GlobalTimers ~= 0 then
 		local i = 1;
@@ -103,16 +104,18 @@ function Boot.update(dt)
 end
 
 function Boot.keypressed(key)
-	local screenPaused = ScreenHandler.inTransition
-  if not screenPaused and ScreenHandler:isScreenOperating() and ScreenHandler.activeScreen.keypressed then
-    ScreenHandler.activeScreen:keypressed(key)
+	local screenPaused = ScreenManager.inTransition
+	if InputManager.active == true then InputManager.pressed[key] = true end
+  if not screenPaused and ScreenManager:isScreenOperating() and ScreenManager.activeScreen.keypressed then
+    ScreenManager.activeScreen:keypressed(key)
   end
 end
 
 function Boot.keyreleased(key)
-	local screenPaused = ScreenHandler.inTransition
-  if not screenPaused and ScreenHandler:isScreenOperating() and ScreenHandler.activeScreen.keyreleased then
-    ScreenHandler.activeScreen:keyreleased(key)
+	local screenPaused = ScreenManager.inTransition
+	if InputManager.active == true then InputManager.pressed[key] = false end
+  if not screenPaused and ScreenManager:isScreenOperating() and ScreenManager.activeScreen.keyreleased then
+    ScreenManager.activeScreen:keyreleased(key)
   end
 end
 

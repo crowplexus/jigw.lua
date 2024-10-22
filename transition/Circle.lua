@@ -27,7 +27,7 @@ function Transition:draw()
   if transIn then self:inwards() else self:outwards() end
   if circS < 0 then
 		finished = true
-		ScreenHandler.inTransition = false
+		ScreenManager.inTransition = false
 	end
 end
 

@@ -11,7 +11,7 @@ local InputManager = {
     ["ui_down"]   = {"down"},
     ["ui_up"]     = {"up"},
     ["ui_right"]  = {"right"},
-    ["ui_accept"] = {"enter"},
+    ["ui_accept"] = {"return"},
     ["ui_pause"]  = {"backspace"},
   },
 }

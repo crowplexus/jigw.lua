@@ -11,9 +11,17 @@ local InputManager = {
     ["ui_down"]   = {"down"},
     ["ui_up"]     = {"up"},
     ["ui_right"]  = {"right"},
-    ["ui_pause"]  = {"enter"},
+    ["ui_accept"] = {"enter"},
+    ["ui_pause"]  = {"backspace"},
   },
 }
+
+--- Binds an action to new keycodes, unsafe version of InputManager.rebindAction.
+--- @param action string                Action to rebind.
+--- @param keyCodes table<string>       New Keycodes to use for the action.
+function InputManager.bindAction(action, keyCodes)
+  InputManager.boundActions[action] = keyCodes
+end
 
 --- Rebinds an action to new keycodes.
 --- @param action string                Action to rebind.

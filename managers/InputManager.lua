@@ -66,7 +66,7 @@ function InputManager.getJustPressed(keyCode,checkActions)
   local kc = keyCode
   if checkActions == true then
     for i=1,#InputManager.boundActions[kc] do
-      local key = tostring(InputManager.boundActions[kc[i]])
+      local key = InputManager.boundActions[kc][i]
       return InputManager.pressed[key] == true
     end
   else
@@ -82,7 +82,7 @@ function InputManager.getPressed(keyCode,checkActions)
   local kc = keyCode
   if checkActions == true then
     for i=1,#InputManager.boundActions[kc] do
-      local key = tostring(InputManager.boundActions[kc[i]])
+      local key = InputManager.boundActions[kc][i]
       return love.keyboard.isDown(key) == false
     end
   else
@@ -98,7 +98,7 @@ function InputManager.getJustReleased(keyCode,checkActions)
   local kc = keyCode
   if checkActions == true then
     for i=1,#InputManager.boundActions[kc] do
-      local key = tostring(InputManager.boundActions[kc[i]])
+      local key = InputManager.boundActions[kc][i]
       return InputManager.pressed[key] == false
     end
   else
@@ -114,7 +114,7 @@ function InputManager.getAnyJustPressed(keyCodes,checkActions)
   local kc = keyCodes
   if checkActions == true then
     for i=1,#InputManager.boundActions[kc] do
-      local key = tostring(InputManager.boundActions[kc[i]])
+      local key = InputManager.boundActions[kc][i]
       return InputManager.pressed[key] == true
     end
   else
@@ -140,7 +140,7 @@ function InputManager.geAnyPressed(keyCodes,checkActions)
   local kc = keyCodes
   if checkActions == true then
     for i=1,#InputManager.boundActions[kc] do
-      local key = tostring(InputManager.boundActions[kc[i]])
+      local key = InputManager.boundActions[kc][i]
       return love.keyboard.isDown(key) == true
     end
   else
@@ -166,7 +166,7 @@ function InputManager.geAnyJustReleased(keyCodes,checkActions)
   local kc = keyCodes
   if checkActions == true then
     for i=1,#InputManager.boundActions[kc] do
-      local key = tostring(InputManager.boundActions[kc[i]])
+      local key = InputManager.boundActions[kc][i]
       return InputManager.pressed[key] == false
     end
   else

@@ -1,4 +1,4 @@
-local Sprite = Object:extend() --- @class Sprite
+local Sprite = Object:extend("Sprite") --- @class Sprite
 function Sprite:__tostring() return "Sprite" end
 
 function Sprite:new(x,y,tex)
@@ -28,7 +28,7 @@ function Sprite:dispose()
 end
 
 function Sprite:draw()
-	if not self.texture or not self.visible then
+	if not self.texture or self.visible ~= true then
 		return
 	end
 	love.graphics.push("all")
@@ -43,6 +43,14 @@ function Sprite:draw()
 	love.graphics.draw(self.texture,0,0)
 	--love.graphics.setColor(Color.WHITE())
 	love.graphics.pop()
+end
+
+function Sprite:getWidth()
+	return self.texture:getWidth() or 0
+end
+
+function Sprite:getHeight()
+	return self.texture:getHeight() or 0
 end
 
 --#region Getters and Setters

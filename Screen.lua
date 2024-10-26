@@ -1,4 +1,4 @@
-local Screen = Object:extend() --- @class Screen
+local Screen = Object:extend("Screen") --- @class Screen
 function Screen:__tostring() return "Screen" end
 
 function Screen:new()
@@ -16,9 +16,9 @@ end
 function Screen:keypressed(key) end
 function Screen:keyreleased(key) end
 function Screen:draw()
-  for i,v in pairs(self.objects) do
-    --local v = self.objects[i]
-    if v and v.draw then v:draw() end
+  for i=1, #self.objects do
+    local v = self.objects[i]
+    if v ~= nil and v.draw then v:draw(dt) end
   end
 end
 

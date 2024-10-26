@@ -336,8 +336,8 @@ function Tween:set(clock)
 
   end
 
-  if self.callbacks and self.callbacks.updateCallback and type(self.callbacks.updateCallback) == "function" then
-    self.callbacks.updateCallback()
+  if self.callbacks and self.callbacks.update and type(self.callbacks.update) == "function" then
+    self.callbacks.update()
   end
   return self.clock >= self.duration
 end
@@ -353,13 +353,17 @@ end
 
 function Tween:update(dt)
   assert(type(dt) == 'number', "dt must be a number")
-  return self:set(self.clock + dt)
+  if self.startDelay > 0.0 then self.startDelay = self.startDelay - dt end
+  local delay = self.startDelay
+  if delay <= 0.0 then
+    return self:set(self.clock + dt)
+  end
 end
 
 
 -- Public interface
 
-function tween.new(duration, subject, target, easing, calls)
+function tween.new(duration, subject, target, easing, calls, startDelay)
   easing = getEasingFunction(easing)
   checkNewParams(duration, subject, target, easing)
   local cbs = {
@@ -385,14 +389,15 @@ function tween.new(duration, subject, target, easing, calls)
     callbacks = cbs,
     clock     = 0,
     cancelled = false,
+    startDelay = startDelay or 0.0,
   }, Tween_mt)
   table.insert(_G.GlobalTweens,{subject=subject,instance=t})
   return tween
 end
 
 --- alias to: tween.new()
-function tween.create(duration,subject,target,easing,calls)
-  return tween.new(duration,subject,target,easing,calls)
+function tween.create(duration,subject,target,easing,calls,startDelay)
+  return tween.new(duration,subject,target,easing,calls,startDelay)
 end
 
 function tween.cancelTweensIn(subject)
@@ -402,6 +407,9 @@ function tween.cancelTweensIn(subject)
     if subject == v.subject and not subject.cancelled then
       table.remove(_G.GlobalTweens,i)
       Tween:cancel()
+      if Tween.callbacks and Tween.callbacks.finish and type(Tween.callbacks.finish) == "function" then
+        Tween.callbacks.finish()
+      end
       break
     end
     i = i + 1

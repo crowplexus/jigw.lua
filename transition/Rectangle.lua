@@ -1,4 +1,4 @@
-Transition = Object:extend() --- this one is broken.
+Transition = Object:extend("RectangleTransition") --- this one is broken.
 function Transition:__tostring() return "RectangleTransition" end
 
 local transIn = true --- @type boolean

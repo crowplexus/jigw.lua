@@ -4,7 +4,7 @@ ShapeType = {
   CIRCLE    = 2,
 }
 
-local ColorShape = Object:extend() --- @class ColorShape
+local ColorShape = Object:extend("ColorShape") --- @class ColorShape
 
 function ColorShape:new(x,y,c,sx,sy)
 	self.position = Vector2(x,y)

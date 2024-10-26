@@ -8,7 +8,7 @@ ProgressFill = {
 }
 
 --- Used for a visual representation of a percentage.
-local ProgressShape = Object:extend() --- @class ProgressShape
+local ProgressShape = Object:extend("ProgressShape") --- @class ProgressShape
 function ProgressShape:__tostring() return "ProgressShape" end
 
 function ProgressShape:new(x,y,w,h,colors)

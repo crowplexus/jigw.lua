@@ -1,4 +1,4 @@
-local Label = Object:extend() --- @class Label
+local Label = Object:extend("Label") --- @class Label
 function Label:__tostring() return "Label" end
 
 local function _isFontPath(p)

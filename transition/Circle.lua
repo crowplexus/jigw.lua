@@ -1,4 +1,4 @@
-Transition = Object:extend()
+Transition = Object:extend("CircleTransition")
 function Transition:__tostring() return "CircleTransition" end
 
 local transIn = true --- @type boolean

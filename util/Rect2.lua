@@ -1,4 +1,4 @@
-local Rect2 = Object:extend()
+local Rect2 = Object:extend("Rect2")
 function Rect2:__tostring()
 	return "(Rect2, X "..self.x.." Y "..self.y.." Width "..self.width.." Height "..self.height..")"
 end

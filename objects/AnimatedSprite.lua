@@ -20,7 +20,7 @@ local function buildAnimation()
 	}
 end
 
-local AnimatedSprite = Object:extend() --- @class AnimatedSprite
+local AnimatedSprite = Object:extend("AnimatedSprite") --- @class AnimatedSprite
 function AnimatedSprite:__tostring() return "AnimatedSprite" end
 
 function AnimatedSprite:new(x,y,tex)

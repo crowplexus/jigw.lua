@@ -1,4 +1,4 @@
-local Camera = Object:extend() --- @class jigw.Camera
+local Camera = Object:extend("Camera") --- @class jigw.Camera
 
 function Camera:new(x,y)
 	local sz = Vector2(love.graphics.getWidth(),love.graphics.getHeight())

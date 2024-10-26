@@ -20,7 +20,7 @@ function Classic:__index(k)
   local cls = getmetatable(self)
   local getter = rawget(rawget(self, __class) == nil and cls or self, get_ .. k)
   if getter == nil then
-    local v = rawget(self, k, _ .. k)
+    local v = rawget(self,_..k)
     if v ~= nil then return v end
     return cls[k]
   else return getter(self) end
@@ -36,16 +36,13 @@ end
 
 function Classic:extend(type, path)
   local cls = {}
-
   for k, v in pairs(self) do
     if k:sub(1, 2) == "__" then cls[k] = v end
   end
-
-  cls.__class = type or "Unknown(" .. self.__class .. ")"
+  cls.__class = type or ("Unknown(" .. self.__class .. ")")
   cls.__path = path
   cls.super = self
   setmetatable(cls, self)
-
   return cls
 end
 

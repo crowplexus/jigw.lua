@@ -1,4 +1,4 @@
-local Vector2 = Object:extend()
+local Vector2 = Object:extend("Vector2")
 function Vector2:__tostring()
 	return "(Vector2, X "..self.x.." Y "..self.y..")"
 end

@@ -96,6 +96,14 @@ function Label:changeFontSize(newSize, force)
 	_recreateFont(self)
 end
 
+function Label:getWidth()
+	return self._renderFont:getWidth(self.text) or 0
+end
+
+function Label:getHeight()
+	return self._renderFont:getHeight() or 0
+end
+
 function Label:centerPosition(_x_)
 	assert(_x_, "Axis value must be either Axis.X, Axis.Y, or Axis.XY")
 	local vpw, vph = love.graphics.getDimensions()

@@ -12,7 +12,7 @@ local InputManager = {
 		["ui_up"] = { "up" },
 		["ui_right"] = { "right" },
 		["ui_accept"] = { "return" },
-		["ui_pause"] = { "backspace" },
+		["ui_cancel"] = { "escape", "backspace" },
 	},
 }
 

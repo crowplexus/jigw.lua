@@ -2,7 +2,9 @@
 --- @author swordcube
 
 -- Backwards compatibility
-table.pack = table.pack or function(...) return { n = select("#", ...), ... } end
+table.pack = table.pack or function(...)
+	return { n = select("#", ...), ... }
+end
 table.unpack = table.unpack or unpack
 
 ---
@@ -15,12 +17,12 @@ table.unpack = table.unpack or unpack
 --- @return boolean
 ---
 function table.contains(table, element)
-    for _, value in pairs(table) do
-        if value == element then
-            return true
-        end
-    end
-    return false
+	for _, value in pairs(table) do
+		if value == element then
+			return true
+		end
+	end
+	return false
 end
 
 ---
@@ -33,12 +35,12 @@ end
 --- @return integer
 ---
 function table.indexOf(table, element)
-    for index, elem in ipairs(table) do
-        if elem == element then
-            return index
-        end
-    end
-    return -1
+	for index, elem in ipairs(table) do
+		if elem == element then
+			return index
+		end
+	end
+	return -1
 end
 
 ---
@@ -51,21 +53,25 @@ end
 --- @return table|nil
 ---
 function table.copy(t, deep, seen)
-    seen = seen or {}
-    if t == nil then return nil end
-    if seen[t] then return seen[t] end
+	seen = seen or {}
+	if t == nil then
+		return nil
+	end
+	if seen[t] then
+		return seen[t]
+	end
 
-    local nt = {}
-    for k, v in pairs(t) do
-        if deep and type(v) == 'table' then
-            nt[k] = table.copy(v, deep, seen)
-        else
-            nt[k] = v
-        end
-    end
-    setmetatable(nt, table.copy(getmetatable(t), deep, seen))
-    seen[t] = nt
-    return nt
+	local nt = {}
+	for k, v in pairs(t) do
+		if deep and type(v) == "table" then
+			nt[k] = table.copy(v, deep, seen)
+		else
+			nt[k] = v
+		end
+	end
+	setmetatable(nt, table.copy(getmetatable(t), deep, seen))
+	seen[t] = nt
+	return nt
 end
 
 ---
@@ -80,13 +86,13 @@ end
 --- @return table
 ---
 function table.filter(t, func)
-    local filtered = {}
-    for _, value in ipairs(t) do
-        if func(value) then
-            table.insert(filtered, value)
-        end
-    end
-    return filtered
+	local filtered = {}
+	for _, value in ipairs(t) do
+		if func(value) then
+			table.insert(filtered, value)
+		end
+	end
+	return filtered
 end
 
 ---
@@ -99,21 +105,21 @@ end
 --- @return string
 ---
 function table.join(t, sep)
-    if sep == nil then
-        sep = ""
-    end
+	if sep == nil then
+		sep = ""
+	end
 
-    local tl = #t
-    local result = ""
+	local tl = #t
+	local result = ""
 
-    for i, value in ipairs(t) do
-        result = result .. tostring(value)
-        if i < tl then
-            result = result .. sep
-        end
-    end
+	for i, value in ipairs(t) do
+		result = result .. tostring(value)
+		if i < tl then
+			result = result .. sep
+		end
+	end
 
-    return result
+	return result
 end
 
 ---

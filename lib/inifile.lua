@@ -28,14 +28,16 @@ local inifile = {
 		The views and conclusions contained in the software and documentation are those of the
 		authors and should not be interpreted as representing official policies, either expressed
 		or implied, of Bart van Strien.
-	]] -- The above license is known as the Simplified BSD license.
+	]], -- The above license is known as the Simplified BSD license.
 }
 
 local defaultBackend = "io"
 
 local backends = {
 	io = {
-		lines = function(name) return assert(io.open(name)):lines() end,
+		lines = function(name)
+			return assert(io.open(name)):lines()
+		end,
 		write = function(name, contents)
 			local file = assert(io.open(name, "w"))
 			file:write(contents)
@@ -43,15 +45,21 @@ local backends = {
 		end,
 	},
 	memory = {
-		lines = function(text) return text:gmatch("([^\r\n]+)\r?\n") end,
-		write = function(name, contents) return contents end,
+		lines = function(text)
+			return text:gmatch("([^\r\n]+)\r?\n")
+		end,
+		write = function(name, contents)
+			return contents
+		end,
 	},
 }
 
 if love then
 	backends.love = {
 		lines = love.filesystem.lines,
-		write = function(name, contents) love.filesystem.write(name, contents) end,
+		write = function(name, contents)
+			love.filesystem.write(name, contents)
+		end,
 	}
 	defaultBackend = "love"
 end
@@ -75,7 +83,7 @@ function inifile.parse(name, backend)
 		if s then
 			section = s
 			t[section] = t[section] or {}
-			cursectionorder = {name = section}
+			cursectionorder = { name = section }
 			table.insert(sectionorder, cursectionorder)
 			validLine = true
 		end
@@ -91,9 +99,15 @@ function inifile.parse(name, backend)
 
 		-- Key-value pairs
 		local key, value = line:match("^([%w_]+)%s-=%s-(.+)$")
-		if tonumber(value) then value = tonumber(value) end
-		if value == "true" then value = true end
-		if value == "false" then value = false end
+		if tonumber(value) then
+			value = tonumber(value)
+		end
+		if value == "true" then
+			value = true
+		end
+		if value == "false" then
+			value = false
+		end
 		if key and value ~= nil and section ~= nil then
 			t[section][key] = value
 			table.insert(cursectionorder, key)
@@ -110,7 +124,7 @@ function inifile.parse(name, backend)
 		__inifile = {
 			comments = comments,
 			sectionorder = sectionorder,
-		}
+		},
 	}), errors
 end
 
@@ -122,7 +136,9 @@ function inifile.save(name, t, backend)
 	local metadata = getmetatable(t)
 	local comments, sectionorder
 
-	if metadata then metadata = metadata.__inifile end
+	if metadata then
+		metadata = metadata.__inifile
+	end
 	if metadata then
 		comments = metadata.comments
 		sectionorder = metadata.sectionorder
@@ -140,7 +156,9 @@ function inifile.save(name, t, backend)
 	local function writevalue(section, key)
 		local value = section[key]
 		-- Discard if it doesn't exist (anymore)
-		if value == nil then return end
+		if value == nil then
+			return
+		end
 		table.insert(contents, ("%s=%s"):format(key, tostring(value)))
 	end
 
@@ -155,7 +173,9 @@ function inifile.save(name, t, backend)
 	local function writesection(section, order)
 		local s = t[section]
 		-- Discard if it doesn't exist (anymore)
-		if not s then return end
+		if not s then
+			return
+		end
 		table.insert(contents, ("[%s]"):format(section))
 
 		assert(tableLike(s), ("Invalid section %s: not table-like"):format(section))

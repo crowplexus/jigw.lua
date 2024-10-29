@@ -1,5 +1,7 @@
 Transition = Object:extend("CircleTransition")
-function Transition:__tostring() return "CircleTransition" end
+function Transition:__tostring()
+	return "CircleTransition"
+end
 
 local transIn = true --- @type boolean
 local finished = true --- @type boolean
@@ -14,31 +16,39 @@ function Transition:reset()
 	finished = false
 	transIn = true
 	local w, h = love.graphics.getDimensions()
-	canvasSize = Vector2(w,h)
+	canvasSize = Vector2(w, h)
 end
 
 function Transition:draw()
-	if finished then return end
-	local circX = (canvasSize.x) * 0.5
-  local circY = (canvasSize.y) * 0.5
-	love.graphics.setColor(0,0,0)
-  love.graphics.circle("fill",circX,circY,circS,circS)
-  love.graphics.setColor(1,1,1)
-  if transIn then self:inwards() else self:outwards() end
-  if circS < 0 then
+	if finished then
+		return
+	end
+	local circX = canvasSize.x * 0.5
+	local circY = canvasSize.y * 0.5
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.circle("fill", circX, circY, circS, circS)
+	love.graphics.setColor(1, 1, 1)
+	if transIn then
+		self:inwards()
+	else
+		self:outwards()
+	end
+	if circS < 0 then
 		finished = true
 		ScreenManager.inTransition = false
 	end
 end
 
 function Transition:inwards(force)
-  if circS >= 900 then transIn = false end
+	if circS >= 900 then
+		transIn = false
+	end
 	if force == true and not started then
 		transIn = true
 		started = true
 		circS = 0
 	end
-  circS = circS + speed
+	circS = circS + speed
 end
 
 function Transition:outwards(force)
@@ -47,7 +57,7 @@ function Transition:outwards(force)
 		started = true
 		circS = 900
 	end
-  circS = circS - speed
+	circS = circS - speed
 end
 
 return Transition

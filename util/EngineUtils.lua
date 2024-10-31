@@ -85,7 +85,7 @@ return {
 		indent = indent or 0
 		local spacing = string.rep(" ", indent)
 
-		local printAsYaml = function(k, v)
+		local function printAsYaml(k, v)
 			if type(v) == "table" then
 				print(spacing .. tostring(k) .. ":")
 				Utils.tablePrint(v, style, indent + 2)
@@ -94,7 +94,7 @@ return {
 			end
 		end
 
-		local printAsJson = function(k, v)
+		local function printAsJson(k, v)
 			if type(v) == "table" then
 				print(spacing .. '"' .. tostring(k) .. '": {')
 				Utils.tablePrint(v, style, indent + 2)

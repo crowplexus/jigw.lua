@@ -76,11 +76,10 @@ return {
 		end
 		return prefix .. result
 	end,
-	--- Returns a stringified table.
+	--- Prints a stringified table.
 	--- @param tbl table table to stringify
 	--- @param indent number indentation level
 	--- @param style string "yaml" or "json" - prints like a lua table if unspecified
-	--- @return string
 	tablePrint = function(tbl, style, indent)
 		indent = indent or 0
 		local spacing = string.rep(" ", indent)

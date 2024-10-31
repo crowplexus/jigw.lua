@@ -76,31 +76,57 @@ return {
 		end
 		return prefix .. result
 	end,
-	tablePrint = function(tbl, indent)
-		if not indent then
-			indent = 0
-		end
-		local toprint = string.rep(" ", indent) .. "{\r\n"
-		indent = indent + 2
-		for k, v in pairs(tbl) do
-			toprint = toprint .. string.rep(" ", indent)
-			if type(k) == "number" then
-				toprint = toprint .. "[" .. k .. "] = "
-			elseif type(k) == "string" then
-				toprint = toprint .. k .. "= "
-			end
-			if type(v) == "number" then
-				toprint = toprint .. v .. ",\r\n"
-			elseif type(v) == "string" then
-				toprint = toprint .. '"' .. v .. '",\r\n'
-			elseif type(v) == "table" then
-				toprint = toprint .. Utils.tablePrint(v, indent + 2) .. ",\r\n"
+	--- Returns a stringified table.
+	--- @param tbl table table to stringify
+	--- @param indent number indentation level
+	--- @param style string "yaml" or "json" - prints like a lua table if unspecified
+	--- @return string
+	tablePrint = function(tbl, indent, style)
+		indent = indent or 0
+		local spacing = string.rep(" ", indent)
+
+		local printAsYaml = function(k, v)
+			if type(v) == "table" then
+				print(spacing .. tostring(k) .. ":")
+				Utils.tablePrint(v, indent + 2)
 			else
-				toprint = toprint .. '"' .. tostring(v) .. '",\r\n'
+				print(spacing .. tostring(k) .. ": " .. tostring(v))
 			end
 		end
-		toprint = toprint .. string.rep(" ", indent - 2) .. "}"
-		return toprint
+
+		local printAsJson = function(k, v)
+			if type(v) == "table" then
+				print(spacing .. '"' .. tostring(k) .. '" = ' .. " {")
+				Utils.tablePrint(v, indent + 2)
+				print(spacing .. "}")
+			else
+				local vstr = type(v) == "string" and '"' .. tostring(v) .. '"' or tostring(v)
+				print(spacing .. '"' .. tostring(k) .. '"' .. " = " .. vstr)
+			end
+		end
+
+		local function printAsTable(k, v)
+			if type(v) == "table" then
+				print(spacing .. "" .. tostring(k) .. " =" .. " {")
+				Utils.tablePrint(v, indent + 2)
+				print(spacing .. "}")
+			else
+				local vstr = type(v) == "string" and '"' .. tostring(v) .. '"' or tostring(v)
+				print(spacing .. tostring(k) .. " = " .. vstr)
+			end
+		end
+
+		for k, v in pairs(tbl) do
+			---@formatter disable
+			if style == "yaml" then
+				printAsYaml(k, v)
+			elseif style == "json" then
+				printAsJson(k, v)
+			else
+				printAsTable(k, v)
+			end
+			---@formatter on
+		end
 	end,
 
 	wrap = function(num, min, max)

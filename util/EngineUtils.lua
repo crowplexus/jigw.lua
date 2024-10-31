@@ -81,14 +81,14 @@ return {
 	--- @param indent number indentation level
 	--- @param style string "yaml" or "json" - prints like a lua table if unspecified
 	--- @return string
-	tablePrint = function(tbl, indent, style)
+	tablePrint = function(tbl, style, indent)
 		indent = indent or 0
 		local spacing = string.rep(" ", indent)
 
 		local printAsYaml = function(k, v)
 			if type(v) == "table" then
 				print(spacing .. tostring(k) .. ":")
-				Utils.tablePrint(v, indent + 2)
+				Utils.tablePrint(v, style, indent + 2)
 			else
 				print(spacing .. tostring(k) .. ": " .. tostring(v))
 			end
@@ -96,19 +96,19 @@ return {
 
 		local printAsJson = function(k, v)
 			if type(v) == "table" then
-				print(spacing .. '"' .. tostring(k) .. '" = ' .. " {")
-				Utils.tablePrint(v, indent + 2)
+				print(spacing .. '"' .. tostring(k) .. '": {')
+				Utils.tablePrint(v, style, indent + 2)
 				print(spacing .. "}")
 			else
 				local vstr = type(v) == "string" and '"' .. tostring(v) .. '"' or tostring(v)
-				print(spacing .. '"' .. tostring(k) .. '"' .. " = " .. vstr)
+				print(spacing .. '"' .. tostring(k) .. '": ' .. vstr)
 			end
 		end
 
 		local function printAsTable(k, v)
 			if type(v) == "table" then
 				print(spacing .. "" .. tostring(k) .. " =" .. " {")
-				Utils.tablePrint(v, indent + 2)
+				Utils.tablePrint(v, style, indent + 2)
 				print(spacing .. "}")
 			else
 				local vstr = type(v) == "string" and '"' .. tostring(v) .. '"' or tostring(v)

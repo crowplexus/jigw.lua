@@ -117,7 +117,6 @@ return {
 		end
 
 		for k, v in pairs(tbl) do
-			---@formatter disable
 			if style == "yaml" then
 				printAsYaml(k, v)
 			elseif style == "json" then
@@ -125,7 +124,6 @@ return {
 			else
 				printAsTable(k, v)
 			end
-			---@formatter on
 		end
 	end,
 

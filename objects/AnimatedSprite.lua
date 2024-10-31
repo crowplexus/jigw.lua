@@ -20,12 +20,12 @@ local function buildAnimation()
 	}
 end
 
-local AnimatedSprite = Object:extend("AnimatedSprite") --- @class AnimatedSprite
+local AnimatedSprite = Classic:extend("AnimatedSprite") --- @class AnimatedSprite
 function AnimatedSprite:__tostring()
 	return "AnimatedSprite"
 end
 
-function AnimatedSprite:new(x, y, tex)
+function AnimatedSprite:build(x, y, tex)
 	self.position = Vector2(x, y) -- X, Y
 	self.offset = Vector2(0, 0)
 	self.scale = Vector2(1, 1)
@@ -33,7 +33,7 @@ function AnimatedSprite:new(x, y, tex)
 	self.centered = true
 	self.visible = true
 	self.rotation = 0
-	self.alpha = 1.0
+	rawset(self, "alpha", 1.0)
 	self.animations = {}
 	self.animation = {
 		name = "default",

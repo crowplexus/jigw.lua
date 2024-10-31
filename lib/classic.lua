@@ -13,9 +13,8 @@
 
 local Classic = { __class = "Classic" }
 
-function Classic:new() end
-
 local __class, get_, set_, _ = "__class", "get_", "set_", "_"
+
 function Classic:__index(k)
 	local cls = getmetatable(self)
 	local getter = rawget(rawget(self, __class) == nil and cls or self, get_ .. k)
@@ -41,6 +40,10 @@ function Classic:__newindex(k, v)
 		return setter(v)
 	end
 end
+
+
+--- Constructor
+function Classic:build() end
 
 function Classic:extend(type, path)
 	local cls = {}
@@ -89,7 +92,7 @@ end
 
 function Classic:__call(...)
 	local obj = setmetatable({}, self)
-	obj:new(...)
+	obj:build(...)
 	return obj
 end
 

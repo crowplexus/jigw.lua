@@ -1,16 +1,16 @@
-local Sprite = Object:extend("Sprite") --- @class Sprite
+local Sprite = Classic:extend("Sprite") --- @class Sprite
 function Sprite:__tostring()
 	return "Sprite"
 end
 
-function Sprite:new(x, y, tex)
+function Sprite:build(x, y, tex)
 	self.position = Vector2(x, y) -- X, Y
 	self.scale = Vector2(1, 1)
 	self.color = Color.WHITE()
 	self.visible = true
 	self.centered = false
 	self.texture = tex or nil
-	self.alpha = 1.0
+	rawset(self, "alpha", 1.0)
 	self.rotation = 0
 
 	self.quads = {}

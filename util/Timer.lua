@@ -1,12 +1,12 @@
 --- Simple Timer class, counts from a specific duration to 0 and finishes
 --- not to be confused with `love.timer.sleep`
 --- @class Timer
-local Timer = Object:extend("Timer")
+local Timer = Classic:extend("Timer")
 function Timer:__tostring()
 	return "Timer"
 end
 
-function Timer:new()
+function Timer:build()
 	self.duration = 0 --- @type number
 	self.loops = 0 --- @type number
 	self.callbacks = {

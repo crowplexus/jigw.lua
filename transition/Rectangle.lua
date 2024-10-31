@@ -1,4 +1,4 @@
-Transition = Object:extend("RectangleTransition") --- this one is broken.
+Transition = Classic:extend("RectangleTransition") --- this one is broken.
 function Transition:__tostring()
 	return "RectangleTransition"
 end

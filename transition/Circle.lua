@@ -1,4 +1,4 @@
-Transition = Object:extend("CircleTransition")
+Transition = Classic:extend("CircleTransition")
 function Transition:__tostring()
 	return "CircleTransition"
 end

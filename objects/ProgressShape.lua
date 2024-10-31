@@ -8,12 +8,12 @@ ProgressFill = {
 }
 
 --- Used for a visual representation of a percentage.
-local ProgressShape = Object:extend("ProgressShape") --- @class ProgressShape
+local ProgressShape = Classic:extend("ProgressShape") --- @class ProgressShape
 function ProgressShape:__tostring()
 	return "ProgressShape"
 end
 
-function ProgressShape:new(x, y, w, h, colors)
+function ProgressShape:build(x, y, w, h, colors)
 	if colors == nil or #colors < 2 then
 		colors = { Color.WHITE(), Color.BLACK() }
 	end

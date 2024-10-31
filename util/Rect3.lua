@@ -1,4 +1,4 @@
-local Rect3 = Object:extend("Rect3")
+local Rect3 = Classic:extend("Rect3")
 function Rect3:__tostring()
 	return "(Rect3, X "
 		.. self.x
@@ -15,7 +15,7 @@ function Rect3:__tostring()
 		.. ")"
 end
 
-function Rect3:new(x, y, z, w, h, d)
+function Rect3:build(x, y, z, w, h, d)
 	self.x = x or 0
 	self.y = y or 0
 	self.z = z or 0
@@ -25,7 +25,7 @@ function Rect3:new(x, y, z, w, h, d)
 end
 
 function Rect3:round()
-	return Rect3:new(
+	return Rect3:build(
 		math.floor(self.x + 0.5),
 		math.floor(self.y + 0.5),
 		math.floor(self.z + 0.5),

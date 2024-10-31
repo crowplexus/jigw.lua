@@ -17,7 +17,7 @@ function Boot.init()
 	_G.JIGW_VERSION = "1.0.0" --- @type string
 	--_G.jigw = {
 
-	Object = require("jigw.lib.classic") --- @class jigw.Object
+	Classic = require("jigw.lib.classic") --- @class jigw.Object
 	Screen = require("jigw.Screen") --- @class jigw.Screen
 	Vector2 = require("jigw.util.Vector2") --- @class jigw.Vector2
 	Vector3 = require("jigw.util.Vector3") --- @class jigw.Vector3

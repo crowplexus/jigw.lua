@@ -1,15 +1,15 @@
-local Vector2 = Object:extend("Vector2")
+local Vector2 = Classic:extend("Vector2")
 function Vector2:__tostring()
 	return "(Vector2, X " .. self.x .. " Y " .. self.y .. ")"
 end
 
-function Vector2:new(x, y)
+function Vector2:build(x, y)
 	self.x = (x and type(x) == "number") and x or 0
 	self.y = (y and type(y) == "number") and y or 0
 end
 
 function Vector2:round()
-	return Vector2:new(math.round(self.x), math.round(self.y))
+	return Vector2:build(math.round(self.x), math.round(self.y))
 end
 
 function Vector2:sortByY(o, a, b)

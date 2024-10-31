@@ -1,6 +1,6 @@
-local Camera = Object:extend("Camera") --- @class jigw.Camera
+local Camera = Classic:extend("Camera") --- @class jigw.Camera
 
-function Camera:new(x, y)
+function Camera:build(x, y)
 	local sz = Vector2(love.graphics.getWidth(), love.graphics.getHeight())
 	self._subCanvas = love.graphics.newCanvas(sz.x, sz.y) --- @class love.Canvas
 	self.position = Vector2(x, y) --- @class Vector2

@@ -70,7 +70,7 @@ function AtlasFrameHelper.buildSparrowQuad(animationList, texture)
 			scale = { x = flipX and -1 or 1, y = flipY and -1 or 1 },
 			rotation = rotated and -90 or 0,
 		})
-		--print(Utils.tablePrint(frames))
+		--Utils.tablePrint(frames)
 	end
 	return frames
 end

@@ -1,7 +1,4 @@
 Transition = Classic:extend("CircleTransition")
-function Transition:__tostring()
-	return "CircleTransition"
-end
 
 local transIn = true --- @type boolean
 local finished = true --- @type boolean

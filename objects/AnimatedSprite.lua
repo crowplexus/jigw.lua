@@ -1,31 +1,18 @@
---- @enum AnimationRepeat
-local AnimationRepeat = {
-	NEVER = 0,
-	ON_END = 1,
-	TO_FRAME = 2,
-}
+local AnimatedSprite = Classic:extend("AnimatedSprite") --- @class AnimatedSprite
 
 local function buildAnimation()
+	-- TODO: loopable animations + loop points
 	return {
 		name = "default",
 		texture = nil, --- @class love.graphics.Image
 		frames = {}, --- @class love.graphics.Quad
 		frameRate = 30, --- @type number
 		offset = Vector2(0, 0),
-		repeatMode = AnimationRepeat.NEVER, --- @type number|AnimationRepeat
-		--- is only valid if `repeatMode` gets set to 2|TO_FRAME
-		--- @type number
-		repeatFrame = nil,
 		length = 0, --- @type number
 	}
 end
 
-local AnimatedSprite = Classic:extend("AnimatedSprite") --- @class AnimatedSprite
-function AnimatedSprite:__tostring()
-	return "AnimatedSprite"
-end
-
-function AnimatedSprite:build(x, y, tex)
+function AnimatedSprite:construct(x, y, tex)
 	self.position = Vector2(x, y) -- X, Y
 	self.offset = Vector2(0, 0)
 	self.scale = Vector2(1, 1)
@@ -33,7 +20,7 @@ function AnimatedSprite:build(x, y, tex)
 	self.centered = true
 	self.visible = true
 	self.rotation = 0
-	rawset(self, "alpha", 1.0)
+	self.alpha = 1.0
 	self.animations = {}
 	self.animation = {
 		name = "default",
@@ -57,14 +44,7 @@ function AnimatedSprite:update(dt)
 			self.animationProgress = self.animationProgress + dt / (curAnim.frameRate * 0.0018)
 		else
 			--- repeats the animation if we even can lol
-			if curAnim.repeatMode == AnimationRepeat.NEVER then
-				self.animationProgress = self.animationProgress - animationEnd
-				return
-			end
 			local returnToFrame = self.animationProgress - animationEnd
-			if curAnim.repeatMode == AnimationRepeat.TO_FRAME and curAnim.repeatFrame then
-				returnToFrame = curAnim.repeatFrame
-			end
 			self.animationProgress = returnToFrame
 		end
 		self.currentFrame = self.currentAnimation.frames[self:getProgress()]

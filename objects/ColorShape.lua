@@ -6,7 +6,7 @@ ShapeType = {
 
 local ColorShape = Classic:extend("ColorShape") --- @class ColorShape
 
-function ColorShape:build(x, y, c, sx, sy)
+function ColorShape:construct(x, y, c, sx, sy)
 	self.position = Vector2(x, y)
 	self.cornerRadius = Vector2(0, 0)
 	self.size = Vector2(sx or 50, sy or 50)
@@ -15,8 +15,7 @@ function ColorShape:build(x, y, c, sx, sy)
 	self.visible = true
 	self.centered = false
 	self.rotation = 0
-	rawset(self, "alpha", 1.0)
-	return self
+	self.alpha = 1.0
 end
 
 function ColorShape:dispose()

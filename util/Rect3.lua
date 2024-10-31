@@ -15,7 +15,7 @@ function Rect3:__tostring()
 		.. ")"
 end
 
-function Rect3:build(x, y, z, w, h, d)
+function Rect3:construct(x, y, z, w, h, d)
 	self.x = x or 0
 	self.y = y or 0
 	self.z = z or 0
@@ -25,7 +25,7 @@ function Rect3:build(x, y, z, w, h, d)
 end
 
 function Rect3:round()
-	return Rect3:build(
+	return Rect3:construct(
 		math.floor(self.x + 0.5),
 		math.floor(self.y + 0.5),
 		math.floor(self.z + 0.5),

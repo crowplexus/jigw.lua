@@ -1,16 +1,13 @@
 local Sprite = Classic:extend("Sprite") --- @class Sprite
-function Sprite:__tostring()
-	return "Sprite"
-end
 
-function Sprite:build(x, y, tex)
+function Sprite:construct(x, y, tex)
 	self.position = Vector2(x, y) -- X, Y
 	self.scale = Vector2(1, 1)
 	self.color = Color.WHITE()
 	self.visible = true
 	self.centered = false
 	self.texture = tex or nil
-	rawset(self, "alpha", 1.0)
+	self.alpha = 1.0
 	self.rotation = 0
 
 	self.quads = {}
@@ -87,7 +84,7 @@ end
 
 --#region Getters and Setters
 function Sprite:get_alpha()
-	return self.color[4]
+	return self.color[4] or 1.0
 end
 
 function Sprite:set_alpha(vl)

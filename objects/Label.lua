@@ -1,7 +1,4 @@
 local Label = Classic:extend("Label") --- @class Label
-function Label:__tostring()
-	return "Label"
-end
 
 local function _isFontPath(p)
 	return p and type(p) == "string" and (p:sub(#".ttf") or p:sub(#".otf"))
@@ -18,7 +15,7 @@ local function _recreateFont(sel)
 	end
 end
 
-function Label:build(x, y, text, size)
+function Label:construct(x, y, text, size)
 	self.position = Vector2(x, y)
 	self.size = Vector2(0, 0)
 	self.scale = Vector2(1, 1)
@@ -31,7 +28,7 @@ function Label:build(x, y, text, size)
 	self.strokeColor = Color.BLACK()
 	self.visible = true
 	self.rotation = 0
-	rawset(self, "alpha", 1.0)
+	self.alpha = 1.0
 	self:changeFontSize(size, true)
 end
 

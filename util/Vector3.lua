@@ -3,14 +3,14 @@ function Vector3:__tostring()
 	return "X: " .. self.x .. " Y: " .. self.y .. " Z: " .. self.z
 end
 
-function Vector3:build(x, y, z)
+function Vector3:construct(x, y, z)
 	self.x = (x and type(x) == "number") and x or 0
 	self.y = (y and type(y) == "number") and y or 0
 	self.z = (z and type(z) == "number") and z or 0
 end
 
 function Vector3:round()
-	return Vector3:build(math.floor(self.x + 0.5), math.floor(self.y + 0.5), math.floor(self.z + 0.5))
+	return Vector3:construct(math.floor(self.x + 0.5), math.floor(self.y + 0.5), math.floor(self.z + 0.5))
 end
 
 function Vector3:sortByY(o, a, b)

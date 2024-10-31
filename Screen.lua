@@ -1,9 +1,6 @@
 local Screen = Classic:extend("Screen") --- @class Screen
-function Screen:__tostring()
-	return "Screen"
-end
 
-function Screen:build()
+function Screen:construct()
 	Screen.objects = {}
 	return Screen
 end

@@ -1,7 +1,4 @@
 Transition = Classic:extend("RectangleTransition") --- this one is broken.
-function Transition:__tostring()
-	return "RectangleTransition"
-end
 
 local transIn = true --- @type boolean
 local finished = true --- @type boolean

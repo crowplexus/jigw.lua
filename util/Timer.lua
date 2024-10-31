@@ -2,11 +2,8 @@
 --- not to be confused with `love.timer.sleep`
 --- @class Timer
 local Timer = Classic:extend("Timer")
-function Timer:__tostring()
-	return "Timer"
-end
 
-function Timer:build()
+function Timer:construct()
 	self.duration = 0 --- @type number
 	self.loops = 0 --- @type number
 	self.callbacks = {

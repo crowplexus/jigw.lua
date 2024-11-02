@@ -11,7 +11,7 @@ end
 --- @param pattern string	The pattern to search for.
 --- @return boolean
 function string.last(str, pattern)
-	return (string.sub(str, #self - #pattern + 1, #self) == pattern)
+	return (string.sub(str, #str - #pattern + 1, #str) == pattern)
 end
 
 local split_t

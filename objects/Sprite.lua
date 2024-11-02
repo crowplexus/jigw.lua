@@ -7,8 +7,8 @@ function Sprite:construct(x, y, tex)
 	self.visible = true
 	self.centered = false
 	self.texture = tex or nil
-	self.alpha = 1.0
 	self.rotation = 0
+	self.alpha = 1.0
 
 	self.quads = {}
 	self.frame = 1
@@ -82,9 +82,26 @@ function Sprite:getDimensions()
 	return self.texture:getWidth() or 0, self.texture:getHeight() or 0
 end
 
---#region Getters and Setters
+function Sprite:centerPosition(_x_)
+	assert(_x_, "Axis value must be either Axis.X, Axis.Y, or Axis.XY")
+	local vpw, vph = love.graphics.getDimensions()
+	local centerX = _x_ == Axis.X
+	local centerY = _x_ == Axis.Y
+	if _x_ == Axis.XY then
+		centerX = true
+		centerY = true
+	end
+	if centerX then
+		self.position.x = vpw * 0.5
+	end
+	if centerY then
+		self.position.y = vph * 0.5
+	end
+	self.centered = centerX == true or centerY == true
+end
+
 function Sprite:get_alpha()
-	return self.color[4] or 1.0
+	return self.color[4]
 end
 
 function Sprite:set_alpha(vl)
@@ -121,25 +138,6 @@ function Sprite:set_vframes(vl)
 	rawset(self, "vframes", vl)
 	local width, height = self:getDimensions()
 	self.quads = generateQuads(self.texture, width, height, self.hframes, self.vframes)
-end
---#endregion
-
-function Sprite:centerPosition(_x_)
-	assert(_x_, "Axis value must be either Axis.X, Axis.Y, or Axis.XY")
-	local vpw, vph = love.graphics.getDimensions()
-	local centerX = _x_ == Axis.X
-	local centerY = _x_ == Axis.Y
-	if _x_ == Axis.XY then
-		centerX = true
-		centerY = true
-	end
-	if centerX then
-		self.position.x = vpw * 0.5
-	end
-	if centerY then
-		self.position.y = vph * 0.5
-	end
-	self.centered = centerX == true or centerY == true
 end
 
 return Sprite

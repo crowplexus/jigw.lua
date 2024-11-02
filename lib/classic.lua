@@ -23,12 +23,12 @@ local __class, get_, set_, _ = "__class", "get_", "set_", "_"
 local function recursiveget(class, k)
 	local canGet = type(class) == "table"
 	if not canGet then
-		print("fatal error in function recursiveget: class is not a table - value was " .. tostring(k))
+		--print("fatal error in function recursiveget: class is not a table - value was " .. tostring(k))
 		return nil
 	end
 	local v = rawget(class, k)
 	if v == nil and class.super then
-		return recursiveget(class.super.k)
+		return recursiveget(class.super, k)
 	else
 		return v
 	end
@@ -36,7 +36,8 @@ end
 
 function Classic:__index(k)
 	local cls = getmetatable(self)
-	local getter = recursiveget(rawget(self, __class) == nil and cls or self, get_ .. k)
+	local isObj = rawget(self, __class) == nil
+	local getter = recursiveget(isObj and cls or self, get_ .. k)
 	if getter == nil then
 		local v = rawget(self, _ .. k)
 		if v ~= nil then

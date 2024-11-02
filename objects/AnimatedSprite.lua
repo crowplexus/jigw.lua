@@ -3,11 +3,11 @@ local AnimatedSprite = Classic:extend("AnimatedSprite") --- @class AnimatedSprit
 local function buildAnimation()
 	-- TODO: loopable animations + loop points
 	return {
-		name = "default",
+		name = "nil",
 		texture = nil, --- @class love.graphics.Image
 		frames = {}, --- @class love.graphics.Quad
 		frameRate = 30, --- @type number
-		offset = Vector2(0, 0),
+		offset = { x = 0, y = 0 },
 		length = 0, --- @type number
 	}
 end
@@ -66,8 +66,11 @@ function AnimatedSprite:draw()
 
 		self.transform:reset()
 		self.transform:translate(self.position:unpack())
-		self.transform:translate(self.offset.x, self.offset.y)
+		self.transform:translate(self.offset:unpack())
 		self.transform:rotate(self.rotation + currentFrame.rotation)
+		if self.currentAnimation ~= nil and self.currentAnimation.offset ~= nil then
+			self.transform:translate(self.currentAnimation.offset.x or 0, self.currentAnimation.offset.y or 0)
+		end
 		if self.centered then
 			self.transform:translate(-frW * 0.5, -frH * 0.5)
 		end
@@ -137,6 +140,18 @@ function AnimatedSprite:getProgress()
 	return progress
 end
 
+function AnimatedSprite:getCurrentAnimation()
+	return self.currentAnimation or buildAnimation()
+end
+
+function AnimatedSprite:getCurrentAnimationName()
+	return self.currentAnimation.name or "nil"
+end
+
+function AnimatedSprite:hasAnimation(name)
+	return self.animations[name] and self.animations[name].name
+end
+
 function AnimatedSprite:loadAtlas(path, animTable)
 	self.texture = love.graphics.newImage(path .. ".png")
 	if type(animTable) == "table" then
@@ -146,6 +161,9 @@ function AnimatedSprite:loadAtlas(path, animTable)
 			local x = animationList[v[2]].frames
 			local quad = atlasHelper.buildSparrowQuad(x, self.texture)
 			self:addAnimationFromAtlasQuad(v[1], quad, v[3])
+			if v.offset ~= nil then
+				self:addOffsetToAnimation(v[1], v.offset.x or 0, v.offset.y or 0)
+			end
 		end
 	end
 	return animationList
@@ -194,7 +212,7 @@ function AnimatedSprite:addOffsetToAnimation(name, x, y)
 		print("Cannot add offset to a animation that doesn't exist.")
 		return
 	end
-	anim.offset = Vector2(x, y)
+	anim.offset = {x = x or 0, y = y or 0}
 	self.animations[name] = anim
 	return anim
 end

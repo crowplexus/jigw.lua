@@ -1,4 +1,4 @@
---- guess what this does given the name.
+--- Guess what this does given the name.
 --- @author swordcube
 
 -- Backwards compatibility
@@ -16,7 +16,7 @@ table.unpack = table.unpack or unpack
 ---
 --- @return boolean
 ---
-function table.contains(table, element)
+function table.has(table, element)
 	for _, value in pairs(table) do
 		if value == element then
 			return true
@@ -34,7 +34,7 @@ end
 ---
 --- @return integer
 ---
-function table.indexOf(table, element)
+function table.find(table, element)
 	for index, elem in ipairs(table) do
 		if elem == element then
 			return index
@@ -128,8 +128,8 @@ end
 --- @param t     table  The table to remove the item from.
 --- @param item  any    The item to remove from the table.
 ---
-function table.removeItem(t, item)
-	table.remove(t, table.indexOf(t, item))
+function table.removeitem(t, item)
+	table.remove(t, table.find(t, item))
 end
 
 return {}

@@ -1,24 +1,7 @@
---- @return boolean
-function string:first(pattern)
-	return self:find("^" .. pattern) ~= nil
-end
+require("jigw.util.StringUtil")
+require("jigw.util.TableUtils")
 
---- @return boolean
-function string:last(pattern)
-	return (self:sub(#self - #pattern + 1, #self) == pattern)
-end
-
-local split_t
-local function gsplit(s)
-	table.insert(split_t, s)
-end
---- @return table<string>
-function string:split(sep, t)
-	split_t = t or {}
-	self:gsub((sep and sep ~= "") and "([^" .. sep .. "]+)" or ".", gsplit)
-	return split_t
-end
-
+--[[
 if not table.move then
 	function table.move(a, f, e, t, b)
 		b = b or a
@@ -28,6 +11,7 @@ if not table.move then
 		return b
 	end
 end
+
 function table.find(t, value)
 	for i = 1, #t do
 		if t[i] == value then
@@ -76,6 +60,7 @@ function table:has(val)
 	end
 	return false
 end
+]]
 
 function math.round(x)
 	return math.floor(x + 0.5)

@@ -32,7 +32,7 @@ function Boot.init()
 
 	Color = require("jigw.util.Color") --- @class jigw.Color
 	ScreenManager = require("jigw.managers.ScreenManager") --- @class jigw.ScreenManager
-	Utils = require("jigw.util.EngineUtils") --- @class jigw.Utils
+	Utils = require("jigw.util.EngineUtil") --- @class jigw.Utils
 	Timer = require("jigw.util.Timer") --- @class jigw.Timer
 	Tween = require("jigw.lib.tween") --- @class jigw.Tween
 	Sound = require("jigw.Sound") --- @class jigw.Sound

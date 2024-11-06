@@ -153,20 +153,22 @@ function AnimatedSprite:hasAnimation(name)
 end
 
 function AnimatedSprite:loadAtlas(path, animTable)
+	local atlasHelper = require("jigw.util.AtlasFrameHelper")
 	self.texture = love.graphics.newImage(path .. ".png")
+	local animationList = atlasHelper.getSparrowAtlas(path .. ".xml")
 	if type(animTable) == "table" then
-		local atlasHelper = require("jigw.util.AtlasFrameHelper")
-		local animationList = atlasHelper.getAnimationListSparrow(path .. ".xml")
-		for i, v in ipairs(animTable) do
-			local x = animationList[v[2]].frames
-			local quad = atlasHelper.buildSparrowQuad(x, self.texture)
+		local i = 1
+		while i <= #animTable do
+			local v = animTable[i]
+			local quad = atlasHelper.buildSparrowQuad(animationList[v[2]].frames, self.texture)
 			self:addAnimationFromAtlasQuad(v[1], quad, v[3])
 			if v.offset ~= nil then
 				self:addOffsetToAnimation(v[1], v.offset.x or 0, v.offset.y or 0)
 			end
+			i = i + 1
 		end
 	end
-	return animationList
+	return self.texture, animationList
 end
 
 -- function AnimatedSprite:addAnimation(name,x,y,width,height,fps,duration,tex)
@@ -233,7 +235,7 @@ function AnimatedSprite:get_alpha()
 	return self.color[4]
 end
 function AnimatedSprite:set_alpha(vl)
-	self.color[4] = vl
+	if self and self.color then self.color[4] = vl end
 end
 
 return AnimatedSprite

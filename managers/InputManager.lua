@@ -71,6 +71,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getJustPressed(keyCode, checkActions)
+	checkActions = checkActions or InputManager.boundActions[keyCode] or false
 	local kc = keyCode
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -87,6 +88,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getPressed(keyCode, checkActions)
+	checkActions = checkActions or InputManager.boundActions[keyCode] or false
 	local kc = keyCode
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -103,6 +105,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getJustReleased(keyCode, checkActions)
+	checkActions = checkActions or InputManager.boundActions[keyCode] or false
 	local kc = keyCode
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -119,6 +122,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getAnyJustPressed(keyCodes, checkActions)
+	checkActions = checkActions or InputManager.boundActions[keyCode] or false
 	local kc = keyCodes
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -146,7 +150,8 @@ end
 --- @param keyCodes table<string>|string      table with keycodes, or action code
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
-function InputManager.geAnyPressed(keyCodes, checkActions)
+function InputManager.getAnyPressed(keyCodes, checkActions)
+	checkActions = checkActions or InputManager.boundActions[keyCode] or false
 	local kc = keyCodes
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -174,7 +179,8 @@ end
 --- @param keyCodes table<string>|string      table with keycodes, or action code
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
-function InputManager.geAnyJustReleased(keyCodes, checkActions)
+function InputManager.getAnyJustReleased(keyCodes, checkActions)
+	checkActions = checkActions or InputManager.boundActions[keyCode] or false
 	local kc = keyCodes
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do

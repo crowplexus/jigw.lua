@@ -1,18 +1,20 @@
+--- Manages input from the user and provides functions to check for input.
+--- @class InputManager
 local InputManager = {
-	-- Table with currently pressed keycodes
+	--- Table with currently pressed keycodes.
 	pressed = {},
-	-- If the Input Manager should operate or not.
+	--- If the Input Manager should operate or not.
 	active = true,
-	-- Pauses the Input Manager during transitions
+	--- Pauses the Input Manager during transitions.
 	autoPause = true,
-	-- ...
+	--- Table with keycodes bound to actions.
 	boundActions = {
 		["ui_left"] = { "left" },
 		["ui_down"] = { "down" },
 		["ui_up"] = { "up" },
 		["ui_right"] = { "right" },
 		["ui_accept"] = { "return" },
-		["ui_cancel"] = { "escape", "backspace" },
+		["ui_cancel"] = { "escape" },
 	},
 }
 
@@ -71,7 +73,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getJustPressed(keyCode, checkActions)
-	checkActions = checkActions or InputManager.boundActions[keyCode] or false
+	checkActions = checkActions or InputManager.boundActions[keyCode] ~= nil or false
 	local kc = keyCode
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -88,7 +90,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getPressed(keyCode, checkActions)
-	checkActions = checkActions or InputManager.boundActions[keyCode] or false
+	checkActions = checkActions or InputManager.boundActions[keyCode] ~= nil or false
 	local kc = keyCode
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -105,7 +107,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getJustReleased(keyCode, checkActions)
-	checkActions = checkActions or InputManager.boundActions[keyCode] or false
+	checkActions = checkActions or InputManager.boundActions[keyCode] ~= nil or false
 	local kc = keyCode
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -122,7 +124,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getAnyJustPressed(keyCodes, checkActions)
-	checkActions = checkActions or InputManager.boundActions[keyCode] or false
+	checkActions = checkActions or InputManager.boundActions[keyCode] ~= nil or false
 	local kc = keyCodes
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -151,7 +153,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getAnyPressed(keyCodes, checkActions)
-	checkActions = checkActions or InputManager.boundActions[keyCode] or false
+	checkActions = checkActions or InputManager.boundActions[keyCode] ~= nil or false
 	local kc = keyCodes
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do
@@ -180,7 +182,7 @@ end
 --- @param checkActions boolean Checks for InputManager.boundActions instead, the keycode should be an action code (i.e: ui_up).
 --- @@return boolean
 function InputManager.getAnyJustReleased(keyCodes, checkActions)
-	checkActions = checkActions or InputManager.boundActions[keyCode] or false
+	checkActions = checkActions or InputManager.boundActions[keyCode] ~= nil or false
 	local kc = keyCodes
 	if checkActions == true then
 		for i = 1, #InputManager.boundActions[kc] do

@@ -57,42 +57,37 @@ function AtlasFrameHelper.buildSparrowQuad(attributes, texture)
 	local i = 1
 	while i <= #attributes do
 		local cfg = attributes[i]
-		local trimmed = cfg.frameX
-
-		--		TODO: test and implement these				--
+		local trimmed = math.abs(cfg.frameX) ~= 0
 		local rotated = cfg.rotated == "true" or false
-		local flippedX = cfg.flipX == "true" or false
-		local flippedY = cfg.flipY == "true" or false
+		local flipX = cfg.flipX == "true" or false
+		local flipY = cfg.flipY == "true" or false
+		local frame = {
+			source = { x = cfg.x or 0, y = cfg.y or 0, width = cfg.width or 1, height = cfg.height or 1 },
+			offset = { x = cfg.frameX or 0, y = cfg.frameY or 0, width = cfg.frameWidth or 0, height = cfg.frameHeight or 0 },
+			rotation = rotated and math.rad(-90) or 0,
+			scale = { x = 1, y = 1 },
+		}
+		local sourceSize = { x = (trimmed and frame.offset or frame.source).width, y = (trimmed and frame.offset or frame.source).height }
 
-		local frameRect = { x = cfg.x, y = cfg.y, width = cfg.width, height = cfg.height }
-		if trimmed then
-			local frameMargin = {
-				x = cfg.frameX,
-				y = cfg.frameY,
-				width = cfg.frameWidth - frameRect.width,
-				height = cfg.frameHeight - frameRect.height,
-			}
-			if frameMargin.width < math.abs(frameMargin.x) then
-				frameMargin.width = math.abs(frameMargin.x)
-			end
-			if frameMargin.height < math.abs(frameMargin.y) then
-				frameMargin.height = math.abs(frameMargin.y)
-			end
-			frameRect = Rect2.combine(frameRect, frameMargin)
+		if not trimmed and rotated then
+			sourceSize = { x = (trimmed and frame.offset or frame.source).height, y = (trimmed and frame.offset or frame.source).width }
 		end
-		local newFrame = {
+		-- flip frame if necessary
+		if flipX then frame.scale.x = frame.scale.x * -1 end
+		if flipY then frame.scale.y = frame.scale.y * -1 end
+		table.insert(frames, {
 			quad = love.graphics.newQuad(
-				frameRect.x,
-				frameRect.y,
-				frameRect.width,
-				frameRect.height,
+				frame.source.x,
+				frame.source.y,
+				frame.source.width,
+				frame.source.height,
 				texture:getDimensions()
 			),
-			offset = not trimmed and { x = 0, y = 0 } or { x = cfg.frameX, y = cfg.frameY },
-			scale = { x = flipX and -1 or 1, y = flipY and -1 or 1 },
-			rotation = rotated and -90 or 0,
-		}
-		table.insert(frames, newFrame)
+			sourceSize = sourceSize,
+			rotation = frame.rotation,
+			offset = frame.offset,
+			scale = frame.scale,
+		})
 		i = i + 1
 	end
 	--Utils.tablePrint(frames)

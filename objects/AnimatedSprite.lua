@@ -61,16 +61,20 @@ function AnimatedSprite:draw()
 	if self.currentFrame == nil then
 		love.graphics.draw(self.texture, self.position.x, self.position.y, self.rotation, self.scale.x, self.scale.y)
 	else
+		-- TODO: rewrite all of this
 		local currentFrame = self.currentFrame
-		local _, _, frW, frH = currentFrame.quad:getViewport()
+		local currentAnimation = self.currentAnimation
+		local _, frY, frW, frH = currentFrame.quad:getViewport()
 
 		self.transform:reset()
+		-- position and offset frame
 		self.transform:translate(self.position:unpack())
-		self.transform:translate(self.offset:unpack())
+		self.transform:translate(self.offset.x + currentAnimation.offset.x, self.offset.y + currentAnimation.offset.y)
+		-- properly rotate the frame
 		self.transform:rotate(self.rotation + currentFrame.rotation)
-		if self.currentAnimation ~= nil and self.currentAnimation.offset ~= nil then
-			self.transform:translate(self.currentAnimation.offset.x or 0, self.currentAnimation.offset.y or 0)
-		end
+		-- offset that bitch
+		self.transform:translate(-currentFrame.offset.x/2, -currentFrame.offset.y/2)
+		-- center whole sprite to screen
 		if self.centered then
 			self.transform:translate(-frW * 0.5, -frH * 0.5)
 		end

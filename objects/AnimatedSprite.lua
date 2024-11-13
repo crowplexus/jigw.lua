@@ -4,6 +4,7 @@ local function buildAnimation()
 	-- TODO: loopable animations + loop points
 	return {
 		name = "nil",
+		loop = true, --- @type boolean|number
 		texture = nil, --- @class love.graphics.Image
 		frames = {}, --- @class love.graphics.Quad
 		frameRate = 30, --- @type number
@@ -29,7 +30,6 @@ function AnimatedSprite:construct(x, y, tex)
 	self.transform = love.math.newTransform()
 	self.currentAnimation = nil
 	self.currentFrame = nil
-	self.animationProgress = 0
 	self.texture = nil
 	if tex then
 		self.texture = tex
@@ -38,18 +38,20 @@ function AnimatedSprite:construct(x, y, tex)
 end
 
 function AnimatedSprite:update(dt)
-	if self.currentAnimation ~= nil then
-		local curAnim = self.currentAnimation
-		local animationEnd = curAnim.length
-		if self.animationProgress < animationEnd then
-			self.animationProgress = self.animationProgress + dt / (curAnim.frameRate * 0.0018)
-		else
-			--- repeats the animation if we even can lol
-			local returnToFrame = self.animationProgress - animationEnd
-			self.animationProgress = returnToFrame
-		end
-		self.currentFrame = self.currentAnimation.frames[self:getProgress()]
+	if self.currentAnimation == nil then
+		return
 	end
+	local curFrameProg = self:getProgress() or 0.0
+	local curFrameDur = self.currentAnimation.length or 1.0
+	local curFrameRate = self.currentAnimation.frameRate or 30
+	self.animation.progress = self.animation.progress + curFrameRate * dt
+	if self.animation.progress > curFrameDur then
+		--if self.animation.loop then
+		local zero = self.animation.progress - curFrameDur
+		self.animation.progress = self.animation.loop or zero
+		--end
+	end
+	self.currentFrame = self.currentAnimation.frames[curFrameProg]
 end
 
 function AnimatedSprite:draw()
@@ -73,7 +75,7 @@ function AnimatedSprite:draw()
 		-- properly rotate the frame
 		self.transform:rotate(self.rotation + currentFrame.rotation)
 		-- offset that bitch
-		self.transform:translate(-currentFrame.offset.x/2, -currentFrame.offset.y/2)
+		self.transform:translate(-currentFrame.offset.x / 2, -currentFrame.offset.y / 2)
 		-- center whole sprite to screen
 		if self.centered then
 			self.transform:translate(-frW * 0.5, -frH * 0.5)
@@ -85,14 +87,13 @@ function AnimatedSprite:draw()
 end
 
 function AnimatedSprite:dispose()
-	for idx, anim in ipairs(self.animations) do
-		for qd, prms in self.animations.quads do
-			if prms.quad.release then
-				prms.quad:release()
+	for i = 1, #self.animations do
+		for j = 1, #self.animations[i].frames do
+			if self.animations[i].frames[j].quad.release then
+				self.animations[i].frames[j].quad:release()
 			end
-			prms = nil
 		end
-		anim = nil
+		self.animations[i] = nil
 	end
 	if self.texture ~= nil then
 		if self.texture.release then
@@ -113,7 +114,6 @@ function AnimatedSprite:dispose()
 	self.transform = nil
 	self.currentAnimation = nil
 	self.currentFrame = nil
-	self.animationProgress = nil
 	self.texture = nil
 end
 
@@ -137,7 +137,7 @@ end
 
 function AnimatedSprite:getProgress()
 	local cur = self.currentAnimation
-	local progress = math.floor(self.animationProgress / cur.length * #cur.frames) + 1
+	local progress = math.floor(self.animation.progress / cur.length * #cur.frames) + 1
 	if progress < 1 or progress > cur.length then
 		progress = 1
 	end
@@ -156,44 +156,34 @@ function AnimatedSprite:hasAnimation(name)
 	return self.animations[name] and self.animations[name].name
 end
 
+--- Loads a sparrow atlas (adobe animate) with animations
+---
+--- Animation table example:
+--- ```lua
+--- -- in order: name, name in file, fps, loop, x, y
+--- { "default", "default", 30, false, 0, 0 }
+--- ```
+--- @param path string The path to the atlas.
+--- @param animTable table A table of animations to load.
 function AnimatedSprite:loadAtlas(path, animTable)
 	local atlasHelper = require("jigw.util.AtlasFrameHelper")
+	if self.texture then self.texture:release() end
 	self.texture = love.graphics.newImage(path .. ".png")
 	local animationList = atlasHelper.getSparrowAtlas(path .. ".xml")
 	if type(animTable) == "table" then
 		local i = 1
 		while i <= #animTable do
 			local v = animTable[i]
+			local animName = v[1]
 			local quad = atlasHelper.buildSparrowQuad(animationList[v[2]].frames, self.texture)
-			self:addAnimationFromAtlasQuad(v[1], quad, v[3])
-			if v.offset ~= nil then
-				self:addOffsetToAnimation(v[1], v.offset.x or 0, v.offset.y or 0)
-			end
+			self:addAnimationFromAtlasQuad(animName, quad, v[3])
+			self:addOffsetToAnimation(animName, v[5] or 0, v[6] or 0)
+			self:addAnimationLoopPoint(animName, v[4])
 			i = i + 1
 		end
 	end
 	return self.texture, animationList
 end
-
--- function AnimatedSprite:addAnimation(name,x,y,width,height,fps,duration,tex)
--- 	tex = tex or self.texture
--- 	if tex == nil then
--- 		print("Cannot add animation to a texture-less AnimatedSprite.")
--- 		return nil
--- 	end
--- 	local anim = buildAnimation()
--- 	anim.tex = tex
--- 	anim.name = name or "default"
--- 	anim.frameRate = fps or 30
--- 	for _y = 0, tex:getHeight() - height, height do
--- 		for _x = 0, tex:getWidth() - width, width do
--- 			table.insert(anim.frames, love.graphics.newQuad(_x,_y,width,height,tex:getDimensions()))
--- 		end
--- 	end
--- 	anim.length = duration or 1
--- 	self.animations[name] = anim
--- 	return anim
--- end
 
 function AnimatedSprite:addAnimationFromAtlasQuad(name, quads, fps, duration)
 	local anim = buildAnimation()
@@ -218,7 +208,18 @@ function AnimatedSprite:addOffsetToAnimation(name, x, y)
 		print("Cannot add offset to a animation that doesn't exist.")
 		return
 	end
-	anim.offset = {x = x or 0, y = y or 0}
+	anim.offset = { x = x or 0, y = y or 0 }
+	self.animations[name] = anim
+	return anim
+end
+
+function AnimatedSprite:addAnimationLoopPoint(name, point)
+	local anim = self.animations[name]
+	if anim == nil then
+		print("Cannot add offset to a animation that doesn't exist.")
+		return
+	end
+	anim.loop = point or true
 	self.animations[name] = anim
 	return anim
 end
@@ -228,16 +229,17 @@ function AnimatedSprite:playAnimation(name, forced)
 		forced = false
 	end
 	if self.animations and self.animations[name] then
-		self.currentAnimation = self.animations[name]
 		if forced then
-			self.animationProgress = 0
+			self.animation.progress = 0
 		end
+		self.currentAnimation = self.animations[name]
 	end
 end
 
 function AnimatedSprite:get_alpha()
 	return self.color[4]
 end
+
 function AnimatedSprite:set_alpha(vl)
 	if self and self.color then self.color[4] = vl end
 end

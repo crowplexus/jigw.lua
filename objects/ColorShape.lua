@@ -1,9 +1,3 @@
---- @enum ShapeType
-ShapeType = {
-	RECTANGLE = 1,
-	CIRCLE = 2,
-}
-
 local ColorShape = Classic:extend("ColorShape") --- @class ColorShape
 
 function ColorShape:construct(x, y, c, sx, sy)

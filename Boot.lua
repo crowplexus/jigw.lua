@@ -10,19 +10,28 @@ local Boot = {}
 function Boot.init()
 	--- overrides some lua functions for extending functionality
 	require("jigw.util.Override")
+	require("jigw.util.Enums")
 	--- Globals ---
-	_G.GlobalTweens = {} --- @type table<Tween>
-	_G.GlobalTimers = {} --- @type table<Timer>
+	_G.GlobalTweens = {}                       --- @type table<Tween>
+	_G.GlobalTimers = {}                       --- @type table<Timer>
 	--- Constants ---
-	_G.JIGW_VERSION = "1.0.0" --- @type string
+	_G.JIGW_VERSION = "1.0.0"                  --- @type string
+	_G.PROJECT = require("project") or {
+		title = "[Jigw Game Project | Placeholder]", --- @type string Window title bar text
+		executable = "jigwPlaceholder",        --- @type string Executable file name
+		wwidth = 800,                          --- @type number Window Width
+		wheight = 600,                         --- @type number Window Height
+	}
+
 	--_G.jigw = {
 
 	Classic = require("jigw.lib.classic") --- @class jigw.Object
-	Screen = require("jigw.Screen") --- @class jigw.Screen
+	Screen = require("jigw.Screen")     --- @class jigw.Screen
+	Camera = require("jigw.Camera")     --- @class jigw.Camera
 	Vector2 = require("jigw.util.Vector2") --- @class jigw.Vector2
 	Vector3 = require("jigw.util.Vector3") --- @class jigw.Vector3
-	Rect2 = require("jigw.util.Rect2") --- @class jigw.Rect2
-	Rect3 = require("jigw.util.Rect3") --- @class jigw.Rect3
+	Rect2 = require("jigw.util.Rect2")  --- @class jigw.Rect2
+	Rect3 = require("jigw.util.Rect3")  --- @class jigw.Rect3
 	ScreenTransitions = {
 		Circle = require("jigw.transition.Circle"),
 		Rectangle = require("jigw.transition.Rectangle"),
@@ -30,12 +39,12 @@ function Boot.init()
 	DefaultScreenTransition = ScreenTransitions.Circle
 	InputManager = require("jigw.managers.InputManager")
 
-	Color = require("jigw.util.Color") --- @class jigw.Color
+	Color = require("jigw.util.Color")                  --- @class jigw.Color
 	ScreenManager = require("jigw.managers.ScreenManager") --- @class jigw.ScreenManager
-	Utils = require("jigw.util.EngineUtil") --- @class jigw.Utils
-	Timer = require("jigw.util.Timer") --- @class jigw.Timer
-	Tween = require("jigw.lib.tween") --- @class jigw.Tween
-	Sound = require("jigw.Sound") --- @class jigw.Sound
+	Utils = require("jigw.util.EngineUtil")             --- @class jigw.Utils
+	Timer = require("jigw.util.Timer")                  --- @class jigw.Timer
+	Tween = require("jigw.lib.tween")                   --- @class jigw.Tween
+	Sound = require("jigw.Sound")                       --- @class jigw.Sound
 
 	--}
 

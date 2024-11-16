@@ -1,11 +1,13 @@
-local Camera = Classic:extend("Camera") --- @class jigw.Camera
+--- A subviewport with scrolling.
+--- @class jigw.Camera
+local Camera = Classic:extend("Camera")
 
 function Camera:construct(x, y)
-	local sz = Vector2(love.graphics.getWidth(), love.graphics.getHeight())
-	self._subCanvas = love.graphics.newCanvas(sz.x, sz.y) --- @class love.Canvas
-	self.position = Vector2(x, y) --- @class Vector2
-	self.color = Color.WHITE() --- @class Color
-	self.rotation = 0 --- @type number
+	local w, h = love.graphics.getDimensions()
+	self._subCanvas = love.graphics.newCanvas(w, h) --- @class love.Canvas
+	self.position = Vector2(x, y)               --- @class Vector2
+	self.color = { 0, 0, 0, 0 }                 --- @class Color
+	self.rotation = 0                           --- @type number
 
 	-- I kinda wanna do like layers with properties
 	-- something like idk:
@@ -21,9 +23,17 @@ end
 
 function Camera:update(dt) end
 
-function Camera:draw() end
+function Camera:draw()
+	love.graphics.push("all")
+	love.graphics.setCanvas(self._subCanvas)
+	love.graphics.clear(self.color)
+	love.graphics.setCanvas()
+	love.graphics.draw(self._subCanvas, self.position.x, self.position.y, self.rotation)
+	love.graphics.pop()
+end
 
 function Camera:addLayer(type, offset) end
+
 function Camera:removeLayer(type, offset) end
 
 return Camera

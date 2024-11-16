@@ -1,12 +1,3 @@
---- Contains fields to define which direction the bar foreground goes to
---- @enum ProgressFill
-ProgressFill = {
-	LTR = 0, --- @type number Left to Right
-	RTL = 1, --- @type number Right to Left
-	TTB = 2, --- @type number Top to Bottom
-	BTT = 3, --- @type number Bottom to Top
-}
-
 --- Used for a visual representation of a percentage.
 local ProgressShape = Classic:extend("ProgressShape") --- @class ProgressShape
 

@@ -175,7 +175,8 @@ function AnimatedSprite:loadAtlas(path, animTable)
 		while i <= #animTable do
 			local v = animTable[i]
 			local animName = v[1]
-			local quad = atlasHelper.buildSparrowQuad(animationList[v[2]].frames, self.texture)
+			local xmlName = v[2]
+			local quad = atlasHelper.buildSparrowQuad(animationList[xmlName].frames, self.texture)
 			self:addAnimationFromAtlasQuad(animName, quad, v[3])
 			self:addOffsetToAnimation(animName, v[5] or 0, v[6] or 0)
 			self:addAnimationLoopPoint(animName, v[4])

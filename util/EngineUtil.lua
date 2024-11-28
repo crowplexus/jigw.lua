@@ -76,55 +76,6 @@ return {
 		end
 		return prefix .. result
 	end,
-	--- Prints a stringified table.
-	--- @param tbl table table to stringify
-	--- @param indent number indentation level
-	--- @param style string "yaml" or "json" - prints like a lua table if unspecified
-	tablePrint = function(tbl, style, indent)
-		indent = indent or 0
-		local spacing = string.rep(" ", indent)
-
-		local function printAsYaml(k, v)
-			if type(v) == "table" then
-				print(spacing .. tostring(k) .. ":")
-				Utils.tablePrint(v, style, indent + 2)
-			else
-				print(spacing .. tostring(k) .. ": " .. tostring(v))
-			end
-		end
-
-		local function printAsJson(k, v)
-			if type(v) == "table" then
-				print(spacing .. '"' .. tostring(k) .. '": {')
-				Utils.tablePrint(v, style, indent + 2)
-				print(spacing .. "}")
-			else
-				local vstr = type(v) == "string" and '"' .. tostring(v) .. '"' or tostring(v)
-				print(spacing .. '"' .. tostring(k) .. '": ' .. vstr)
-			end
-		end
-
-		local function printAsTable(k, v)
-			if type(v) == "table" then
-				print(spacing .. "" .. tostring(k) .. " =" .. " {")
-				Utils.tablePrint(v, style, indent + 2)
-				print(spacing .. "}")
-			else
-				local vstr = type(v) == "string" and '"' .. tostring(v) .. '"' or tostring(v)
-				print(spacing .. tostring(k) .. " = " .. vstr)
-			end
-		end
-
-		for k, v in pairs(tbl) do
-			if style == "yaml" then
-				printAsYaml(k, v)
-			elseif style == "json" then
-				printAsJson(k, v)
-			else
-				printAsTable(k, v)
-			end
-		end
-	end,
 
 	wrap = function(num, min, max)
 		if not min or type(min) ~= "number" then

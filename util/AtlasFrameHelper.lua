@@ -38,26 +38,27 @@ function AtlasFrameHelper.getSparrowAtlas(file)
 		end
 		curPos = curPos + 1
 	end
-	--Utils.tablePrint(animations)
+	--print(animations)
 	return animations
 end
 
 function AtlasFrameHelper.buildSparrowQuad(attributes, texture)
 	local frames = {}
-	--if texture == nil then
-	--	assert(
-	--		"Attempt to build an SparrowAtlas Quad without a texture, did you forget to set a texture to an AnimatedSprite?"
-	--	)
-	--	return frames
-	--end
-	--if #attributes == 0 then
-	--	assert("Attempt to build an SparrowAtlas Quad without any attributes.")
-	--	return frames
-	--end
+	if texture == nil then
+		assert(
+			"Attempt to build an SparrowAtlas Quad without a texture, did you forget to set a texture to an AnimatedSprite?"
+		)
+		return frames
+	end
+	if #attributes == 0 then
+		assert("Attempt to build an SparrowAtlas Quad without any attributes.")
+		return frames
+	end
 	local i = 1
 	while i <= #attributes do
 		local cfg = attributes[i]
-		local trimmed = math.abs(cfg.frameX) ~= 0
+		print(cfg)
+		local trimmed = math.abs(cfg.frameX or 0) ~= 0
 		local rotated = cfg.rotated == "true" or false
 		local flipX = cfg.flipX == "true" or false
 		local flipY = cfg.flipY == "true" or false
@@ -67,10 +68,12 @@ function AtlasFrameHelper.buildSparrowQuad(attributes, texture)
 			rotation = rotated and math.rad(-90) or 0,
 			scale = { x = 1, y = 1 },
 		}
-		local sourceSize = { x = (trimmed and frame.offset or frame.source).width, y = (trimmed and frame.offset or frame.source).height }
+		local sourceSize = { x = (trimmed and frame.offset or frame.source).width, y = (trimmed and frame.offset or frame.source)
+		.height }
 
 		if not trimmed and rotated then
-			sourceSize = { x = (trimmed and frame.offset or frame.source).height, y = (trimmed and frame.offset or frame.source).width }
+			sourceSize = { x = (trimmed and frame.offset or frame.source).height, y = (trimmed and frame.offset or frame.source)
+			.width }
 		end
 		-- flip frame if necessary
 		if flipX then frame.scale.x = frame.scale.x * -1 end
@@ -90,7 +93,7 @@ function AtlasFrameHelper.buildSparrowQuad(attributes, texture)
 		})
 		i = i + 1
 	end
-	--Utils.tablePrint(frames)
+	--print(frames)
 	return frames
 end
 

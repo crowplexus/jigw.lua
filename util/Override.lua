@@ -1,5 +1,6 @@
-require("jigw.util.StringUtil")
-require("jigw.util.TableUtils")
+require("jigw.util.override.String")
+require("jigw.util.override.Table")
+require("jigw.util.override.Math")
 
 local luaPrint = print
 
@@ -15,71 +16,22 @@ function print(...)
 	local ginfo = debug.getinfo(2, "Sl")
 	local source, line = ginfo.short_src, ginfo.currentline
 	local info = ...
-	-- TODO: gotta implement tableprint here somehow
-	luaPrint(string.format("[%s:%d] %s", source, line, info))
-end
-
---[[
-if not table.move then
-	function table.move(a, f, e, t, b)
-		b = b or a
-		for i = f, e do
-			b[i + t - 1] = a[i]
-		end
-		return b
-	end
-end
-
-function table.find(t, value)
-	for i = 1, #t do
-		if t[i] == value then
-			return i
-		end
-	end
-end
-
-local __number__ = "number"
-local table_remove = table.remove
-	or function(t, pos)
-		local n = #t
-		if pos == nil then
-			pos = n
-		end
-		local v = t[pos]
-		if pos < n then
-			table_move(t, pos + 1, n, pos)
-		end
-		t[n] = nil
-		return v
-	end
-function table.remove(list, idx)
-	if idx == nil or type(idx) == __number__ then
-		return table_remove(list, idx)
-	end
-	local j, v = 1
-	for i = j, #list do
-		if list[i] and idx(list, i, j) then
-			v, list[i] = list[i]
-		else
-			if i ~= j then
-				list[j], list[i] = list[i]
+	if string.first(tostring(info), "table: ") then
+		luaPrint(string.format("[%s:%d] %s", source, line, info))
+		local indent = 2
+		local spacing = string.rep(" ", 1)
+		for k, v in pairs(info) do
+			if type(v) == "table" then
+				luaPrint(spacing .. "" .. tostring(k) .. " =" .. " {")
+				luaPrint(v, style, indent + 2)
+				luaPrint(spacing .. "}")
+			else
+				local vstr = type(v) == "string" and '"' .. tostring(v) .. '"' or tostring(v)
+				luaPrint(spacing .. tostring(k) .. " = " .. vstr)
 			end
-			j = j + 1
 		end
+	else
+		luaPrint(string.format("[%s:%d] %s", source, line, info))
 	end
-	return v
 end
 
-function table:has(val)
-	for i, v in next, self do
-		if v == val then
-			return true
-		end
-	end
-	return false
-end
-]]
-
-function math.round(x)
-	return math.floor(x + 0.5)
-end

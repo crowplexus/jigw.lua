@@ -1,3 +1,4 @@
+--- @class FrameCollection
 local FrameCollection = {}
 
 function FrameCollection:fromDataList(image, list)

@@ -11,6 +11,8 @@ local Sound = {
     globalUpdate = true,
 }
 
+--- Updates the sound channels.
+--- @param _ number
 function Sound.update(_)
     Sound.forEachSfx(function(sound, i)
         if sound and not sound:isPlaying() then

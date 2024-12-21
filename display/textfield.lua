@@ -17,6 +17,8 @@ function TextField:init(x, y, text)
     return self
 end
 
+--- Updates the text field.
+--- @param _ number  The time passed since the last frame.
 function TextField:update(_)
 end
 

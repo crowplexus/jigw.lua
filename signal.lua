@@ -1,3 +1,4 @@
+--- A signal is a way to call multiple functions at once.
 --- @class Signal
 local Signal = Class("Signal")
 

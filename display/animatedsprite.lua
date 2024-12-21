@@ -27,6 +27,8 @@ function AnimatedSprite:init(x, y)
     return self
 end
 
+--- Updates the AnimatedSprite.
+--- @param dt number  The time passed since the last frame.
 function AnimatedSprite:update(dt)
     if self.animation.playing then
         local nextframe = framedt + dt * self.animation.speed * self.animation.current.fps
@@ -54,6 +56,7 @@ function AnimatedSprite:update(dt)
     end
 end
 
+--- Draws the AnimatedSprite.
 function AnimatedSprite:draw()
     if self.texture and self.visible then
         love.graphics.push("all")
@@ -101,6 +104,12 @@ function AnimatedSprite:set_texture(nvl)
     self.texture = nvl
 end
 
+--- Adds an animation to the animation list, allowing it to be played properly.
+--- @param name string  The name of the animation.
+--- @param frames table  Frame information.
+--- @param loop? boolean  If the animation should loop.
+--- @param fps? number  The frames per second of the animation.
+--- @param length? number  The length of the animation.
 function AnimatedSprite:addAnimation(name, frames, loop, fps, length, texture)
     local anim = {
         name = name or "default",          --- @type string
@@ -114,11 +123,19 @@ function AnimatedSprite:addAnimation(name, frames, loop, fps, length, texture)
     self.animation.list[name] = anim
 end
 
+--- Adds an offset to an animation.
+--- @param name string  The name of the animation.
+--- @param x? number  The x offset.
+--- @param y? number  The y offset.
 function AnimatedSprite:addAnimationOffset(name, x, y)
     local anim = self.animation.list[name]
     self.animation.list[name].offset = { x or anim.offset.x or 0, y or anim.offset.y or 0 }
 end
 
+--- Plays an animation.
+--- @param name string  The name of the animation.
+--- @param forced? boolean  If the animation should be forced to play (return to the first frame).
+--- @param speed? number  The speed of the animation.
 function AnimatedSprite:playAnimation(name, forced, speed)
     local anim = self.animation.list[name]
     if anim ~= nil then
@@ -134,11 +151,14 @@ function AnimatedSprite:playAnimation(name, forced, speed)
     end
 end
 
+--- Stops the current animation being played.
 function AnimatedSprite:stopAnimation()
     self.animation.playing = false
     self.animation.frame = 0
 end
 
+--- Centers the AnimatedSprite to the canvas.
+--- @param type number  Type of centering (0x01 for X, 0x02 for Y, 0x03 for both).
 function AnimatedSprite:worldCenter(type)
     local x, y = love.graphics.getDimensions()
     if type == 0x01 or type == 0x03 then self.position.x = x * 0.5 end

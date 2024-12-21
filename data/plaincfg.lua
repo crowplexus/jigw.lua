@@ -30,8 +30,11 @@ local function tovalue(x)
     return x
 end
 
+--- Parser for cfg, ini, and toml plain text config files.
 local plaincfg = {}
 
+--- Parses the content of a plain text config file.
+--- @param content string  The content of the file.
 function plaincfg.parse(content)
     local file = {}
     local contable = split(content, "\n")

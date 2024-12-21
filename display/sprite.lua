@@ -15,9 +15,12 @@ function Sprite:init(x, y)
     return self
 end
 
-function Sprite:update(dt)
+--- Updates the sprite.
+--- @param _ number  The time passed since the last frame.
+function Sprite:update(_)
 end
 
+--- Draws the sprite.
 function Sprite:draw()
     if self.texture and self.visible then
         love.graphics.push("all")

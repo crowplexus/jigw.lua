@@ -2,27 +2,39 @@
 --- @class Canvas
 local Canvas = Class("Canvas")
 
+--- Initializes the canvas' variables.
 function Canvas:init()
     self.objects = {}
     self.visible = true
     return self
 end
 
+--- Adds an object to the canvas.
+--- @param o Class  The object to be added.
+--- @return Class  The object added.
 function Canvas:add(o)
     if o then self.objects[#self.objects + 1] = o end
     return o
 end
 
+--- Removes an object from the canvas.
+--- @param o Class  The object to be removed.
+--- @return number  The index of the object removed, -1 if operation fails.
 function Canvas:remove(o)
+    local ret = -1
     for i = 1, #self.objects do
         if self.objects[i] == o then
             self.objects[i] = nil
             table.remove(self.objects, i)
+            ret = i
             break
         end
     end
+    return ret
 end
 
+--- Updates all objects in the canvas.
+--- @param dt number  The time passed since the last frame.
 function Canvas:update(dt)
     if #self.objects == 0 then return end
     local i = 1
@@ -34,6 +46,7 @@ function Canvas:update(dt)
     end
 end
 
+--- Draws all objects in the canvas.
 function Canvas:draw()
     if not self.visible or self.objects == 0 then return end
     local i = 1
@@ -45,6 +58,7 @@ function Canvas:draw()
     end
 end
 
+--- Disposes of all objects in the canvas.
 function Canvas:dispose()
     local i = 1
     while i <= #self.objects do

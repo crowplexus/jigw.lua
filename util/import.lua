@@ -6,7 +6,7 @@ LoveDefaults = {
 Enums = {
     --- @enum Axis
     Axis = {
-    NONE = 0x00,
+        NONE = 0x00,
         X = 0x01,
         Y = 0x02,
         XY = 0x03

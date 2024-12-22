@@ -1,3 +1,4 @@
+--- Basic Sprite class, can load a 2D texture and display it on the screen.
 --- @class Sprite
 local Sprite = Class("Sprite")
 local transform = love.math.newTransform()
@@ -10,6 +11,7 @@ function Sprite:init(x, y)
     self.texture = nil          --- @type love.Image
     self.position = Vec2(x, y)  --- @type Vec2
     self.scale = Vec2(1, 1)     --- @type Vec2
+    self.shear = Vec2(0, 0)     --- @type Vec2
     self.color = { 1, 1, 1, 1 } --- @type table<number>
     self.angle = 0              --- @type number
     return self
@@ -29,6 +31,7 @@ function Sprite:draw()
         transform:translate(self.position:unpack())
         transform:rotate(self.angle)
         transform:scale(self.scale:unpack())
+        love.graphics.shear(self.shear:unpack())
         love.graphics.draw(self.texture, transform)
         if self.color then love.graphics.setColor(1, 1, 1, 1) end
         love.graphics.pop()

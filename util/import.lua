@@ -2,6 +2,16 @@ LoveDefaults = {
 	font = love.graphics.getFont()
 }
 
+--- @type Enums
+Enums = {
+    --- @enum Axis
+    Axis = {
+        X = Enums.Axis.X,
+        Y = 0x02,
+        XY = 0x03
+    }
+}
+
 Class = require("engine.class")
 Input = require("engine.input")
 

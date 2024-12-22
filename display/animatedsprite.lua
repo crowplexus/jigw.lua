@@ -1,3 +1,4 @@
+--- Sprite class with advanced animation support.
 --- @class AnimatedSprite
 local AnimatedSprite = Class()
 
@@ -5,33 +6,35 @@ local framedt = 0
 local lastanim = nil
 local transform = love.math.newTransform()
 
---- Creates an AnimatedSprite.
+--- Initialises variables for the Animated Sprite.
 --- @param x? number     X position.
 --- @param y? number     Y position.
 function AnimatedSprite:init(x, y)
-    self.visible = true            --- @type boolean
-    self.texture = nil             --- @type love.Image
-    self.position = Vec2(x, y)     --- @type Vec2
-    self.scale = Vec2(1, 1)        --- @type Vec2
-    self.color = { 1, 1, 1, 1 }    --- @type table<number>
-    self.angle = 0                 --- @type number
-    self.centered = 0x00           --- @type number
+    self.visible = true --- @type boolean
+    self.texture = nil --- @type love.Image
+    self.position = Vec2(x, y) --- @type Vec2
+    self.scale = Vec2(1, 1) --- @type Vec2
+    self.color = {1, 1, 1, 1} --- @type table<number>
+    self.angle = 0 --- @type number
+    self.centered = 0x00 --- @type number
+    self.shear = Vec2(0, 0) --- @type Vec2
     self.animation = {
-        current = nil,             --- @type table
-        playing = false,           --- @type boolean
-        offset = { x = 0, y = 0 }, --- @type table[number,number]
-        speed = 1.0,               --- @type number
-        frame = nil,               --- @type table
-        list = {},                 --- @type table
-    }                              --- @type table
+        current = nil, --- @type table
+        playing = false, --- @type boolean
+        offset = {x = 0, y = 0}, --- @type table[number,number]
+        speed = 1.0, --- @type number
+        frame = nil, --- @type table
+        list = {} --- @type table
+    } --- @type table
     return self
 end
 
---- Updates the AnimatedSprite.
+--- Updates the Animated Sprite.
 --- @param dt number  The time passed since the last frame.
 function AnimatedSprite:update(dt)
     if self.animation.playing then
-        local nextframe = framedt + dt * self.animation.speed * self.animation.current.fps
+        local nextframe = framedt + dt * self.animation.speed
+        nextframe = nextframe * self.animation.current.fps
         if self.animation.current.loop then
             while nextframe < 0 or nextframe > self.animation.current.length do
                 if nextframe <= 0 then
@@ -52,11 +55,12 @@ function AnimatedSprite:update(dt)
             end
         end
         framedt = nextframe
-        self.animation.frame = self.animation.current.frames[math.ceil(math.max(1, framedt))]
+        local i = math.ceil(math.max(1, framedt))
+        self.animation.frame = self.animation.current.frames[i]
     end
 end
 
---- Draws the AnimatedSprite.
+--- Draws the Animated Sprite to a canvas or whole screen.
 function AnimatedSprite:draw()
     if self.texture and self.visible then
         love.graphics.push("all")
@@ -72,36 +76,31 @@ function AnimatedSprite:draw()
             -- rotate current frame
             transform:rotate(self.angle + frame.angle)
             -- offset the animation
-            transform:translate(self.animation.offset.x or 0, self.animation.offset.y or 0)
+            transform:translate(self.animation.offset.x or 0,
+                                self.animation.offset.y or 0)
             if self.centered ~= 0x00 then -- this should probably be an enum
                 local _, _, vpW, vpH = self.animation.frame.quad:getViewport()
-                if self.centered == 0x01 then
+                if self.centered == Enums.Axis.X then
                     transform:translate(-vpW * 0.5, 0)
-                elseif self.centered == 0x02 then
+                elseif self.centered == Enums.Axis.Y then
                     transform:translate(0, -vpH * 0.5)
-                elseif self.centered == 0x03 then
+                elseif self.centered == Enums.Axis.XY then
                     transform:translate(-vpW * 0.5, -vpH * 0.5)
                 end
             end
             -- done, draw the animation
-            love.graphics.draw(self.texture, self.animation.frame.quad, transform)
+            love.graphics.shear(self.shear:unpack())
+            love.graphics.draw(self.texture, self.animation.frame.quad,
+                               transform)
         else
             transform:scale(self.scale.x, self.scale.y)
             transform:rotate(self.angle)
+            love.graphics.shear(self.shear:unpack())
             love.graphics.draw(self.texture, transform)
         end
         if self.color then love.graphics.setColor(1, 1, 1, 1) end
         love.graphics.pop()
     end
-end
-
-function AnimatedSprite:set_texture(nvl)
-    if not nvl then return end
-    if self.texture ~= nil then
-        self.texture:release()
-        self.texture = nil
-    end
-    self.texture = nvl
 end
 
 --- Adds an animation to the animation list, allowing it to be played properly.
@@ -112,13 +111,13 @@ end
 --- @param length? number  The length of the animation.
 function AnimatedSprite:addAnimation(name, frames, loop, fps, length, texture)
     local anim = {
-        name = name or "default",          --- @type string
-        loop = loop or false,              --- @type boolean
-        frames = frames or {},             --- @type table
-        offset = { x = 0, y = 0 },         --- @type table
-        fps = fps or 30,                   --- @type number
+        name = name or "default", --- @type string
+        loop = loop or false, --- @type boolean
+        frames = frames or {}, --- @type table
+        offset = {x = 0, y = 0}, --- @type table
+        fps = fps or 30, --- @type number
         length = length or #frames or 0.0, --- @type number
-        texture = texture or self.texture, --- @type love.Image
+        texture = texture or self.texture --- @type love.Image
     }
     self.animation.list[name] = anim
 end
@@ -129,7 +128,9 @@ end
 --- @param y? number  The y offset.
 function AnimatedSprite:addAnimationOffset(name, x, y)
     local anim = self.animation.list[name]
-    self.animation.list[name].offset = { x or anim.offset.x or 0, y or anim.offset.y or 0 }
+    self.animation.list[name].offset = {
+        x or anim.offset.x or 0, y or anim.offset.y or 0
+    }
 end
 
 --- Plays an animation.
@@ -157,12 +158,15 @@ function AnimatedSprite:stopAnimation()
     self.animation.frame = 0
 end
 
---- Centers the AnimatedSprite to the canvas.
---- @param type number  Type of centering (0x01 for X, 0x02 for Y, 0x03 for both).
+--- Centers the Animated Sprite to the canvas.
+--- @param type number|Axis The axis to center the Animated Sprite to.
+--- @see Enums.Axis (utils/import.lua)
 function AnimatedSprite:worldCenter(type)
     local x, y = love.graphics.getDimensions()
-    if type == 0x01 or type == 0x03 then self.position.x = x * 0.5 end
-    if type == 0x02 or type == 0x03 then self.position.y = y * 0.5 end
+    local isX, isY = type == Enums.Axis.X, type == Enums.Axis.Y
+    if type == Enums.Axis.XY then isX, isY = true, true end
+    if isX then self.position.x = x * 0.5 end
+    if isY then self.position.y = y * 0.5 end
     self.centered = type
 end
 

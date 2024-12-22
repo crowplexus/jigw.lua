@@ -11,6 +11,8 @@ local Sound = {
     globalUpdate = true,
 }
 
+local _lastWasLooped = false
+
 --- Updates the sound channels.
 --- @param _ number
 function Sound.update(_)
@@ -28,7 +30,7 @@ end
 --- @param sourcetype? string Source type (e.g: "stream" or "static")
 --- @param volume? number Volume (0-1)
 --- @param force? boolean Play even if music is already playing
-function Sound.play(filename, sourcetype, volume, force)
+function Sound.playMusic(filename, sourcetype, volume, force)
     sourcetype = sourcetype or "stream"
     force = force or false
     if type(filename) == "string" then
@@ -42,7 +44,7 @@ function Sound.play(filename, sourcetype, volume, force)
 end
 
 --- Plays a sound effect
---- @see Sound.play
+--- @see Sound.playMusic
 function Sound.playSfx(filename, sourcetype, volume)
     if #Sound.sounds >= Sound.maxSounds then return end
     if type(filename) == "string" then
@@ -51,9 +53,29 @@ function Sound.playSfx(filename, sourcetype, volume)
     local sound = filename
     if sound then
         sound:setVolume(volume or 1)
+        if _lastWasLooped == true then
+            sound:setLooping(true)
+            _lastWasLooped = false
+        end
         sound:stop()
         Sound.sounds[#Sound.sounds + 1] = sound
         sound:play()
+    end
+end
+
+--[[
+-- i was JOKING when i wrote this
+--- Plays background music no matter what
+--- @see Sound.playMusic
+function Sound.playMusicAggresive(filename, sourcetype, volume)
+    Sound.playMusic(filename, sourcetype, volume, true)
+end]]
+
+--- Plays background music if it's not already playing
+--- @see Sound.playMusic
+function Sound.playMusicPassive(filename, sourcetype, volume)
+    if not Sound.isPlaying() then
+        Sound.playMusic(filename, sourcetype, volume)
     end
 end
 
@@ -70,7 +92,10 @@ end
 --- Sets the looping state of the current music.
 --- @see love.audio.setLooping
 function Sound.setLooping(looping)
-    if Sound.bgm then Sound.bgm:setLooping(looping) end
+    if Sound.bgm then
+        Sound.bgm:setLooping(looping)
+        _lastWasLooped = looping == true
+    end
 end
 
 --- Checks if the music is currently playing.

@@ -13,6 +13,7 @@ function TextField:init(x, y, text)
     self.position = Vec2(x, y)               --- @type Vec2
     self.color = { 1, 1, 1, 1 }              --- @type table<number>
     self.shear = Vec2(0, 0)                  --- @type Vec2
+    self.centered = Enums.Axis.NONE          --- @type number
     self.fieldEnd = love.graphics.getWidth() --- @type number
     self.alignment = "left"                  --- @type "left"|"center"|"right"
     return self
@@ -34,6 +35,23 @@ function TextField:draw()
         if self.font then love.graphics.setFont(LoveDefaults.font) end
         love.graphics.pop()
     end
+end
+
+--- Centers the Text Field to the canvas.
+--- @param type number|Axis The axis to center the Text Field to.
+--- @see Enums.Axis (utils/import.lua)
+function TextField:worldCenter(type)
+    local x, y = love.graphics.getDimensions()
+    local isX, isY = type == Enums.Axis.X, type == Enums.Axis.Y
+    if type == Enums.Axis.XY then isX, isY = true, true end
+    if isX then self.position.x = x * 0.5 end
+    if isY then self.position.y = y * 0.5 end
+    self.centered = type
+end
+
+--- Centers the Text Field to itself.
+function TextField:resetCenter()
+    self.centered = Enums.Axis.NONE
 end
 
 function TextField:set_font(nvl)

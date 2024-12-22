@@ -7,13 +7,14 @@ local transform = love.math.newTransform()
 --- @param x? number     X position of the Sprite.
 --- @param y? number     Y position of the Sprite.
 function Sprite:init(x, y)
-    self.visible = true         --- @type boolean
-    self.texture = nil          --- @type love.Image
-    self.position = Vec2(x, y)  --- @type Vec2
-    self.scale = Vec2(1, 1)     --- @type Vec2
-    self.shear = Vec2(0, 0)     --- @type Vec2
-    self.color = { 1, 1, 1, 1 } --- @type table<number>
-    self.angle = 0              --- @type number
+    self.visible = true             --- @type boolean
+    self.texture = nil              --- @type love.Image
+    self.position = Vec2(x, y)      --- @type Vec2
+    self.scale = Vec2(1, 1)         --- @type Vec2
+    self.shear = Vec2(0, 0)         --- @type Vec2
+    self.centered = Enums.Axis.NONE --- @type number
+    self.color = { 1, 1, 1, 1 }     --- @type table<number>
+    self.angle = 0                  --- @type number
     return self
 end
 
@@ -36,6 +37,23 @@ function Sprite:draw()
         if self.color then love.graphics.setColor(1, 1, 1, 1) end
         love.graphics.pop()
     end
+end
+
+--- Centers the Sprite to the canvas.
+--- @param type number|Axis The axis to center the Sprite to.
+--- @see Enums.Axis (utils/import.lua)
+function Sprite:worldCenter(type)
+    local x, y = love.graphics.getDimensions()
+    local isX, isY = type == Enums.Axis.X, type == Enums.Axis.Y
+    if type == Enums.Axis.XY then isX, isY = true, true end
+    if isX then self.position.x = x * 0.5 end
+    if isY then self.position.y = y * 0.5 end
+    self.centered = type
+end
+
+--- Centers the Sprite to itself.
+function Sprite:resetCenter()
+    self.centered = Enums.Axis.NONE
 end
 
 function Sprite:set_texture(nvl)

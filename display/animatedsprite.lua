@@ -10,22 +10,22 @@ local transform = love.math.newTransform()
 --- @param x? number     X position.
 --- @param y? number     Y position.
 function AnimatedSprite:init(x, y)
-    self.visible = true --- @type boolean
-    self.texture = nil --- @type love.Image
-    self.position = Vec2(x, y) --- @type Vec2
-    self.scale = Vec2(1, 1) --- @type Vec2
-    self.color = {1, 1, 1, 1} --- @type table<number>
-    self.angle = 0 --- @type number
-    self.centered = 0x00 --- @type number
-    self.shear = Vec2(0, 0) --- @type Vec2
+    self.visible = true             --- @type boolean
+    self.texture = nil              --- @type love.Image
+    self.position = Vec2(x, y)      --- @type Vec2
+    self.scale = Vec2(1, 1)         --- @type Vec2
+    self.shear = Vec2(0, 0)         --- @type Vec2
+    self.color = {1, 1, 1, 1}       --- @type table<number>
+    self.angle = 0                  --- @type number
+    self.centered = Enums.Axis.NONE --- @type number
     self.animation = {
-        current = nil, --- @type table
-        playing = false, --- @type boolean
-        offset = {x = 0, y = 0}, --- @type table[number,number]
-        speed = 1.0, --- @type number
-        frame = nil, --- @type table
-        list = {} --- @type table
-    } --- @type table
+        current = nil,              --- @type table
+        playing = false,            --- @type boolean
+        offset = {x = 0, y = 0},    --- @type table[number,number]
+        speed = 1.0,                --- @type number
+        frame = nil,                --- @type table
+        list = {}                   --- @type table
+    }                               --- @type table
     return self
 end
 
@@ -76,9 +76,8 @@ function AnimatedSprite:draw()
             -- rotate current frame
             transform:rotate(self.angle + frame.angle)
             -- offset the animation
-            transform:translate(self.animation.offset.x or 0,
-                                self.animation.offset.y or 0)
-            if self.centered ~= 0x00 then -- this should probably be an enum
+            transform:translate(self.animation.offset.x or 0, self.animation.offset.y or 0)
+            if self.centered ~= Enums.Axis.NONE then -- this should probably be an enum
                 local _, _, vpW, vpH = self.animation.frame.quad:getViewport()
                 if self.centered == Enums.Axis.X then
                     transform:translate(-vpW * 0.5, 0)
@@ -89,9 +88,9 @@ function AnimatedSprite:draw()
                 end
             end
             -- done, draw the animation
+            local quad = self.animation.frame.quad
             love.graphics.shear(self.shear:unpack())
-            love.graphics.draw(self.texture, self.animation.frame.quad,
-                               transform)
+            love.graphics.draw(self.texture, quad, transform)
         else
             transform:scale(self.scale.x, self.scale.y)
             transform:rotate(self.angle)
@@ -168,6 +167,11 @@ function AnimatedSprite:worldCenter(type)
     if isX then self.position.x = x * 0.5 end
     if isY then self.position.y = y * 0.5 end
     self.centered = type
+end
+
+--- Centers the Animated Sprite to itself.
+function AnimatedSprite:resetCenter()
+    self.centered = Enums.Axis.NONE
 end
 
 function AnimatedSprite:set_texture(nvl)

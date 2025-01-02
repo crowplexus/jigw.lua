@@ -1,5 +1,7 @@
 LoveDefaults = {
-	font = love.graphics.getFont()
+	font = love.graphics.getFont(),
+    gfx = love.graphics,
+    audio = love.audio,
 }
 
 --- @type Enums
@@ -15,6 +17,8 @@ Enums = {
 
 Class = require("engine.class")
 Input = require("engine.input")
+
+ScreenManager = require("engine.screenmanager")
 
 Sprite = require("engine.display.sprite")
 AnimatedSprite = require("engine.display.animatedsprite")

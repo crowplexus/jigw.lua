@@ -13,6 +13,7 @@ function AnimatedSprite:init(x, y)
     self.visible = true             --- @type boolean
     self.texture = nil              --- @type love.Image
     self.position = Vec2(x, y)      --- @type Vec2
+    self.offset = Vec2(0, 0)        --- @type Vec2
     self.scale = Vec2(1, 1)         --- @type Vec2
     self.shear = Vec2(0, 0)         --- @type Vec2
     self.color = {1, 1, 1, 1}       --- @type table<number>
@@ -33,8 +34,7 @@ end
 --- @param dt number  The time passed since the last frame.
 function AnimatedSprite:update(dt)
     if self.animation.playing then
-        local nextframe = framedt + dt * self.animation.speed
-        nextframe = nextframe * self.animation.current.fps
+        local nextframe = framedt + dt * (self.animation.current.fps * self.animation.speed)
         if self.animation.current.loop then
             while nextframe < 0 or nextframe > self.animation.current.length do
                 if nextframe <= 0 then
@@ -55,9 +55,23 @@ function AnimatedSprite:update(dt)
             end
         end
         framedt = nextframe
-        local i = math.ceil(math.max(1, framedt))
-        self.animation.frame = self.animation.current.frames[i]
+        self.animation.frame = self.animation.current.frames[math.ceil(math.max(1, framedt))]
     end
+end
+
+local function center(self)
+    local x, y = 0, 0
+    local dimX, dimY = 0, 0
+    if self.animation.playing and self.animation.frame then
+        dimX, dimY = self.animation.frame.quad:getViewport()
+    else
+        dimX, dimY = self.texture:getDimensions()
+    end
+    if self.centered == Enums.Axis.X then x, y = -dimX * 0.5, 0
+    elseif self.centered == Enums.Axis.Y then x, y = 0, -dimY * 0.5
+    elseif self.centered == Enums.Axis.XY then x, y = -dimX * 0.5, -dimY * 0.5
+    end
+    return x, y
 end
 
 --- Draws the Animated Sprite to a canvas or whole screen.
@@ -65,37 +79,28 @@ function AnimatedSprite:draw()
     if self.texture and self.visible then
         love.graphics.push("all")
         if self.color then love.graphics.setColor(self.color) end
+        local px, py = (self.position.x or 0) + (self.offset.x or 0), (self.position.y or 0) + (self.offset.y or 0)
         transform:reset()
-        transform:translate(self.position.x or 0, self.position.y or 0)
-        local frame = self.animation.frame
-        if self.animation.playing and frame then
-            -- offset current frame
-            if frame.offset then
+        transform:translate(px, py)
+        if not self.animation.playing then
+            transform:rotate(self.angle)
+            transform:shear(self.shear:unpack())
+            if self.centered ~= Enums.Axis.NONE then
+                transform:translate(center(self))
+            end
+            love.graphics.draw(self.texture, transform)
+        elseif self.animation.playing and self.animation.frame then
+            transform:translate(self.animation.offset.x or 0, self.animation.offset.y or 0) -- offset the animation
+            local frame = self.animation.frame
+            transform:rotate(self.angle + frame.angle) -- rotate frame
+            if frame.offset then -- offset frame
                 transform:translate(-frame.offset.x, -frame.offset.y)
             end
-            -- rotate current frame
-            transform:rotate(self.angle + frame.angle)
-            -- offset the animation
-            transform:translate(self.animation.offset.x or 0, self.animation.offset.y or 0)
-            if self.centered ~= Enums.Axis.NONE then -- this should probably be an enum
-                local _, _, vpW, vpH = self.animation.frame.quad:getViewport()
-                if self.centered == Enums.Axis.X then
-                    transform:translate(-vpW * 0.5, 0)
-                elseif self.centered == Enums.Axis.Y then
-                    transform:translate(0, -vpH * 0.5)
-                elseif self.centered == Enums.Axis.XY then
-                    transform:translate(-vpW * 0.5, -vpH * 0.5)
-                end
-            end
-            -- done, draw the animation
-            local quad = self.animation.frame.quad
-            love.graphics.shear(self.shear:unpack())
-            love.graphics.draw(self.texture, quad, transform)
-        else
-            transform:scale(self.scale.x, self.scale.y)
-            transform:rotate(self.angle)
-            love.graphics.shear(self.shear:unpack())
-            love.graphics.draw(self.texture, transform)
+            transform:shear(self.shear:unpack()) -- apply shear
+            --[[if self.centered ~= Enums.Axis.NONE then
+                transform:translate(center(self)) -- apply centering
+            end]] -- doesn't work?
+            love.graphics.draw(self.texture, self.animation.frame.quad, transform) -- done, draw the animation
         end
         if self.color then love.graphics.setColor(1, 1, 1, 1) end
         love.graphics.pop()
@@ -143,7 +148,7 @@ function AnimatedSprite:playAnimation(name, forced, speed)
         local newanim = lastanim ~= anim.name
         self.animation.current = anim
         self.animation.speed = speed or 1.0
-        if newanim or forced then self.animation.frame = 0 end
+        if newanim or forced then self.animation.frame = false end
         self.animation.frame = self.animation.current.frames[1]
         self.animation.offset = self.animation.current.offset
         lastanim = self.animation.current
@@ -154,7 +159,7 @@ end
 --- Stops the current animation being played.
 function AnimatedSprite:stopAnimation()
     self.animation.playing = false
-    self.animation.frame = 0
+    self.animation.frame = false
 end
 
 --- Centers the Animated Sprite to the canvas.

@@ -49,7 +49,6 @@ end
 --- Draws all objects in the canvas.
 function Canvas:draw()
     if not self.visible or self.objects == 0 then return end
-    love.graphics.push("all")
     local i = 1
     while i <= #self.objects do
         if self.objects[i].draw then -- can draw
@@ -57,7 +56,6 @@ function Canvas:draw()
         end
         i = i + 1
     end
-    love.graphics.pop()
 end
 
 --- Disposes of all objects in the canvas.

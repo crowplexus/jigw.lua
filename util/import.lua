@@ -23,6 +23,7 @@ ScreenManager = require("engine.screenmanager")
 Sprite = require("engine.display.sprite")
 AnimatedSprite = require("engine.display.animatedsprite")
 TextField = require("engine.display.textfield")
+Camera = require("engine.display.camera")
 Canvas = require("engine.display.canvas")
 Screen = require("engine.display.screen")
 

@@ -4,16 +4,32 @@ LoveDefaults = {
     audio = love.audio,
 }
 
+local function mkReadOnlyTbl(tbl)
+    if type(tbl) == "table" then
+        local mt = {
+            __mode = "k", -- weak keys
+            __index = function(_, k)
+                -- recursion, yay!
+                return mkReadOnlyTbl(tbl[k])
+            end,
+            __newindex = function(t, k, v)
+                error("Attempt to update a read-only table, key "..tostring(k).." with value "..tostring(v), 2)
+            end,
+        }
+        return setmetatable({}, mt)
+    else
+        return tbl
+    end
+end
 --- @type Enums
-Enums = {
-    --- @enum Axis
+Enums = mkReadOnlyTbl({
     Axis = {
         NONE = 0x00,
         X = 0x01,
         Y = 0x02,
         XY = 0x03
-    }
-}
+    },
+})
 
 Class = require("engine.class")
 Input = require("engine.input")

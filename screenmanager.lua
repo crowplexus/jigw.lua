@@ -2,6 +2,14 @@
 --- @class ScreenManager
 local ScreenManager = Class("ScreenManager")
 
+local _camera = nil
+function ScreenManager:getCamera()
+    if not _camera then
+        _camera = ScreenManager.activeScreen:getCamera()
+    end
+    return _camera
+end
+
 function ScreenManager:initialize()
     self.screens = {}
     self.activeScreen = nil
@@ -27,6 +35,7 @@ function ScreenManager:switchScreen(name)
     if self.activeScreen then
         self.activeScreen:exit()
         self.activeScreen = nil
+        _camera = nil
     end
     self.activeScreen = self.screens[name]
     self.activeScreen:enter()

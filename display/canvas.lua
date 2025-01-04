@@ -46,6 +46,15 @@ function Canvas:update(dt)
     end
 end
 
+function Canvas:getCamera()
+    for _, v in pairs(self.objects) do
+        if string.find(tostring(v), "Camera") ~= -1 then
+            return v
+        end
+    end
+    return nil
+end
+
 --- Draws all objects in the canvas.
 function Canvas:draw()
     if not self.visible or self.objects == 0 then return end

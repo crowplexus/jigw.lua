@@ -41,7 +41,7 @@ end
 --- @param actionA string Action ID (e.g: "ui_left")
 --- @param actionB string Action ID (e.g: "ui_right")
 --- @return number
-function Input.axis(actionA,actionB)
+function Input.axis(actionA, actionB)
     return Input.down(actionA) and -1 or Input.down(actionB) and 1 or 0
 end
 

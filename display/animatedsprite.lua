@@ -59,19 +59,30 @@ function AnimatedSprite:update(dt)
     end
 end
 
-local function center(self)
-    local x, y = 0, 0
-    local dimX, dimY = 0, 0
+function AnimatedSprite:getDimensions()
     if self.animation.playing and self.animation.frame then
-        dimX, dimY = self.animation.frame.quad:getViewport()
+        return self.animation.frame.quad:getViewport()
     else
-        dimX, dimY = self.texture:getDimensions()
+        return self.texture:getDimensions()
     end
-    if self.centered == Enums.Axis.X then x, y = -dimX * 0.5, 0
-    elseif self.centered == Enums.Axis.Y then x, y = 0, -dimY * 0.5
-    elseif self.centered == Enums.Axis.XY then x, y = -dimX * 0.5, -dimY * 0.5
+end
+
+function AnimatedSprite:getWidth()
+    if self.animation.playing and self.animation.frame then
+        local _, _, w, _ = self.animation.frame.quad:getViewport()
+        return w
+    else
+        return self.texture:getWidth()
     end
-    return x, y
+end
+
+function AnimatedSprite:getHeight()
+    if self.animation.playing and self.animation.frame then
+        local _, _, _, h = self.animation.frame.quad:getViewport()
+        return h
+    else
+        return self.texture:getHeight()
+    end
 end
 
 --- Draws the Animated Sprite to a canvas or whole screen.
@@ -79,17 +90,10 @@ function AnimatedSprite:draw()
     if self.texture and self.visible then
         love.graphics.push("all")
         if self.color then love.graphics.setColor(self.color) end
-        local px, py = (self.position.x or 0) + (self.offset.x or 0), (self.position.y or 0) + (self.offset.y or 0)
         transform:reset()
+        local px, py = (self.position.x or 0) + (self.offset.x or 0), (self.position.y or 0) + (self.offset.y or 0)
         transform:translate(px, py)
-        if not self.animation.playing then
-            transform:rotate(self.angle)
-            transform:shear(self.shear:unpack())
-            if self.centered ~= Enums.Axis.NONE then
-                transform:translate(center(self))
-            end
-            love.graphics.draw(self.texture, transform)
-        elseif self.animation.playing and self.animation.frame then
+        if self.animation.playing and self.animation.frame then
             transform:translate(self.animation.offset.x or 0, self.animation.offset.y or 0) -- offset the animation
             local frame = self.animation.frame
             transform:rotate(self.angle + frame.angle) -- rotate frame
@@ -97,10 +101,20 @@ function AnimatedSprite:draw()
                 transform:translate(-frame.offset.x, -frame.offset.y)
             end
             transform:shear(self.shear:unpack()) -- apply shear
-            --[[if self.centered ~= Enums.Axis.NONE then
-                transform:translate(center(self)) -- apply centering
-            end]] -- doesn't work?
-            love.graphics.draw(self.texture, self.animation.frame.quad, transform) -- done, draw the animation
+        else
+            transform:rotate(self.angle)
+            transform:shear(self.shear:unpack())
+        end
+        if self.centered ~= Enums.Axis.NONE then
+            local x, y = self.centered == Enums.Axis.X, self.centered == Enums.Axis.Y
+            if self.centered == Enums.Axis.XY then x, y = true, true end
+            if x then transform:translate(-self:getWidth() * 0.5, 0) end
+            if y then transform:translate(0, -self:getHeight() * 0.5) end
+        end
+        if self.animation.playing and self.animation.frame then
+            love.graphics.draw(self.texture, self.animation.frame.quad, transform)
+        else
+            love.graphics.draw(self.texture, transform)
         end
         if self.color then love.graphics.setColor(1, 1, 1, 1) end
         love.graphics.pop()

@@ -53,10 +53,6 @@ function Sound.playSfx(filename, sourcetype, volume)
     local sound = filename
     if sound then
         sound:setVolume(volume or 1)
-        if _lastWasLooped == true then
-            sound:setLooping(true)
-            _lastWasLooped = false
-        end
         sound:stop()
         Sound.sounds[#Sound.sounds + 1] = sound
         sound:play()

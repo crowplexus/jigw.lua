@@ -16,6 +16,10 @@ Enums = {
 }
 setmetatable(Enums, {
     __newindex = function(table, key, value)
+        if key == table then
+            warn("Cannot modify a read-only table")
+            return
+        end
         error("Attempt to modify read-only table: " .. tostring(key))
     end
 })

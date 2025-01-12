@@ -13,7 +13,9 @@ end
 --- @param o Class  The object to be added.
 --- @return Class  The object added.
 function Canvas:add(o)
-    if o then self.objects[#self.objects + 1] = o end
+    if self.objects and o then
+        self.objects[#self.objects + 1] = o
+    end
     return o
 end
 
@@ -21,6 +23,7 @@ end
 --- @param o Class  The object to be removed.
 --- @return number  The index of the object removed, -1 if operation fails.
 function Canvas:remove(o)
+    if not self.objects then return end
     local ret = -1
     for i = 1, #self.objects do
         if self.objects[i] == o then
@@ -36,7 +39,7 @@ end
 --- Updates all objects in the canvas.
 --- @param dt number  The time passed since the last frame.
 function Canvas:update(dt)
-    if #self.objects == 0 then return end
+    if not self.objects or #self.objects == 0 then return end
     local i = 1
     while i <= #self.objects do
         if self.objects[i].update then -- can update
@@ -47,6 +50,7 @@ function Canvas:update(dt)
 end
 
 function Canvas:getCamera()
+    if not self.objects or #self.objects == 0 then return end
     for _, v in pairs(self.objects) do
         if string.find(tostring(v), "Camera") ~= -1 then
             return v
@@ -57,7 +61,9 @@ end
 
 --- Draws all objects in the canvas.
 function Canvas:draw()
-    if not self.visible or self.objects == 0 then return end
+    if not self.visible or not self.objects or self.objects == 0 then
+        return
+    end
     local i = 1
     while i <= #self.objects do
         if self.objects[i].draw then -- can draw
@@ -69,6 +75,7 @@ end
 
 --- Disposes of all objects in the canvas.
 function Canvas:dispose()
+    if not self.objects or self.objects == 0 then return end
     local i = 1
     while i <= #self.objects do
         self.objects[i] = nil

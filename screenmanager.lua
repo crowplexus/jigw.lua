@@ -11,16 +11,8 @@ function ScreenManager:getCamera()
 end
 
 function ScreenManager:initialize()
-    self.screens = {}
     self.activeScreen = nil
     self.overlays = {}
-end
-
---- Adds a screen to the screen manager.
---- @param screen Screen The screen to add.
---- @param name string The name of the screen.
-function ScreenManager:addScreen(screen, name)
-    self.screens[name or screen.name] = screen
 end
 
 --- Adds an overlay to the screen manager.
@@ -30,15 +22,19 @@ function ScreenManager:addOverlay(overlay)
 end
 
 --- Switches to a screen.
---- @param name string The name of the screen to switch to.
-function ScreenManager:switchScreen(name)
+--- @param path string The module path of the screen to switch to.
+function ScreenManager:switchScreen(path)
     if self.activeScreen then
         self.activeScreen:exit()
         self.activeScreen = nil
         _camera = nil
     end
-    self.activeScreen = self.screens[name]
-    self.activeScreen:enter()
+    self.activeScreen = type(path) == "string" and require(path):new() or path
+    if self.activeScreen then
+        self.activeScreen:enter()
+    else
+        error("Failed to initialize screen \""..tostring(path).."\"")
+    end
 end
 
 --- Updates the active screen.
@@ -69,7 +65,7 @@ end
 
 --- Draws the active screen and overlays.
 function ScreenManager:draw()
-    if self.activeScreen then
+    if self.activeScreen and self.activeScreen.visible then
         self.activeScreen:draw()
     end
     for _, overlay in pairs(self.overlays) do

@@ -14,29 +14,29 @@ local luaprint = print
 ---
 ---@param ... any
 function print(...)
-    local ginfo = debug.getinfo(2, "Sl")
-    local source, line = ginfo.short_src, ginfo.currentline
-    local info = ...
-    if string.find(tostring(info), "^" .. "table?") ~= nil then
-        luaprint(string.format("[%s:%d]: %s", source, line, info))
-        if type(info) ~= "table" then
+	local ginfo = debug.getinfo(2, "Sl")
+	local source, line = ginfo.short_src, ginfo.currentline
+	local info = ...
+	if string.find(tostring(info), "^" .. "table?") ~= nil then
+		luaprint(string.format("[%s:%d]: %s", source, line, info))
+		if type(info) ~= "table" then
 			return
 		end
-        local indent = 2
-        local spacing = string.rep(" ", 1)
-        for k, v in pairs(info) do
-            if type(v) == "table" then
-                luaprint(spacing .. "" .. tostring(k) .. " =" .. " {")
-                luaprint(v, style, indent + 2)
-                luaprint(spacing .. "}")
-            else
-                local vstr =
-                    type(v) == "string" and '"' .. tostring(v) .. '"' or
-                        tostring(v)
-                luaprint(spacing .. tostring(k) .. " = " .. vstr)
-            end
-        end
-    else
-        luaprint(string.format("[%s:%d]: %s", source, line, info))
-    end
+		local indent = 2
+		local spacing = string.rep(" ", 1)
+		for k, v in pairs(info) do
+			if type(v) == "table" then
+				luaprint(spacing .. "" .. tostring(k) .. " =" .. " {")
+				luaprint(v, style, indent + 2)
+				luaprint(spacing .. "}")
+			else
+				local vstr =
+					type(v) == "string" and '"' .. tostring(v) .. '"' or
+						tostring(v)
+				luaprint(spacing .. tostring(k) .. " = " .. vstr)
+			end
+		end
+	else
+		luaprint(string.format("[%s:%d]: %s", source, line, info))
+	end
 end

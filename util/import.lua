@@ -1,27 +1,27 @@
 LoveDefaults = {
 	font = love.graphics.getFont(),
-    gfx = love.graphics,
-    audio = love.audio,
+	gfx = love.graphics,
+	audio = love.audio,
 }
 
 --- @type Enums
 Enums = {
-    --- @enum Axis
-    Axis = {
-        NONE = 0x00,
-        X = 0x01,
-        Y = 0x02,
-        XY = 0x03
-    }
+	--- @enum Axis
+	Axis = {
+		NONE = 0x00,
+		X = 0x01,
+		Y = 0x02,
+		XY = 0x03
+	}
 }
 setmetatable(Enums, {
-    __newindex = function(table, key, value)
-        if key == table then
-            warn("Cannot modify a read-only table")
-            return
-        end
-        error("Attempt to modify read-only table: " .. tostring(key))
-    end
+	__newindex = function(table, key, value)
+		if key == table then
+			warn("Cannot modify a read-only table")
+			return
+		end
+		error("Attempt to modify read-only table: " .. tostring(key))
+	end
 })
 
 Class = require("engine.class")
@@ -45,6 +45,6 @@ Rect2 = require("engine.util.math.rect2")
 Rect3 = require("engine.util.math.rect3")
 
 GlobalUpdate = function(dt)
-    if Input.update and Input.globalUpdate then Input.update(dt) end
-    if Sound.update and Sound.globalUpdate then Sound.update(dt) end
+	if Input.update and Input.globalUpdate then Input.update(dt) end
+	if Sound.update and Sound.globalUpdate then Sound.update(dt) end
 end

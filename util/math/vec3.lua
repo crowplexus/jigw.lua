@@ -8,9 +8,9 @@ function Vec3:__call(x, y, z) return self:new(x, y, z) end
 --- @param y? number  The y position.
 --- @param z? number  The z position.
 function Vec3:init(x, y, z)
-    self.x = x or 0
-    self.y = y or 0
-    self.z = z or 0
+	self.x = x or 0
+	self.y = y or 0
+	self.z = z or 0
 end
 
 --- Rounds the values of the vector, then returns it.
@@ -31,9 +31,9 @@ function Vec3:unpack() return self.x, self.y, self.z end
 
 --- Disposes of the vector and clears its values from memory.
 function Vec3:dispose()
-    for k, _ in pairs(self) do
-        self[k] = nil
-    end
+	for k, _ in pairs(self) do
+		self[k] = nil
+	end
 end
 
 --- @see Vec3.new

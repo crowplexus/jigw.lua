@@ -15,6 +15,7 @@ function Camera:init(x, y)
 	--- @type Rect2
 	self.limit = Rect2(-1000000, -1000000, 1000000, 1000000)
 	-- TODO ^: implement camera limit
+	return self
 end
 
 function Camera:getTransform() -- TODO: make objects be able to ignore camera transform

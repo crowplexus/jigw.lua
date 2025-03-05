@@ -5,6 +5,7 @@ local Signal = Class("Signal")
 function Signal:init()
 	for i = 1, #Signal.funcs do Signal.funcs[i] = nil end
 	Signal.funcs = {}
+	return self
 end
 
 --- Adds a function to the signal.

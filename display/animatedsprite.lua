@@ -1,6 +1,6 @@
 --- Sprite class with advanced animation support.
 --- @class AnimatedSprite
-local AnimatedSprite = Class()
+local AnimatedSprite = Class("AnimatedSprite")
 
 local framedt = 0
 local lastanim = nil
@@ -194,7 +194,7 @@ function AnimatedSprite:resetCenter()
 end
 
 function AnimatedSprite:set_texture(nvl)
-	if not nvl then return end
+	if not nvl then return nil end
 	if self.texture ~= nil then
 		self.texture:release()
 		self.texture = nil

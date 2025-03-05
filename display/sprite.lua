@@ -13,7 +13,7 @@ function Sprite:init(x, y)
 	self.scale = Vec2(1, 1)         --- @type Vec2
 	self.shear = Vec2(0, 0)         --- @type Vec2
 	self.centered = Enums.Axis.NONE --- @type number
-	self.tint = { 1, 1, 1, 1 }     --- @type table<number>
+	self.tint = { 1, 1, 1, 1 }      --- @type table<number>
 	self.angle = 0                  --- @type number
 	return self
 end
@@ -57,7 +57,7 @@ function Sprite:resetCenter()
 end
 
 function Sprite:set_texture(nvl)
-	if not nvl then return end
+	if not nvl then return nil end
 	if self.texture ~= nil then
 		self.texture:release()
 		self.texture = nil

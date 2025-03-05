@@ -73,7 +73,7 @@ function ScreenManager:draw()
 	if self.activeScreen and self.activeScreen.visible then
 		self.activeScreen:draw()
 	end
-	for _, overlay in pairs(self.overlays) do
+	for _, overlay in pairs(self.overlays or {}) do
 		overlay:draw()
 	end
 end

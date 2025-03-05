@@ -11,6 +11,7 @@ function Vec2:__call(x, y) return self:new(x, y) end
 function Vec2:init(x, y)
 	self.x = x or 0
 	self.y = y or 0
+	return self
 end
 
 --- Rounds the values of the vector, then returns it.

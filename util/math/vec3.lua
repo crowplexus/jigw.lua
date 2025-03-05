@@ -11,6 +11,7 @@ function Vec3:init(x, y, z)
 	self.x = x or 0
 	self.y = y or 0
 	self.z = z or 0
+	return self
 end
 
 --- Rounds the values of the vector, then returns it.

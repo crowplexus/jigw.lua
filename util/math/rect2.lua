@@ -17,6 +17,7 @@ function Rect2:init(x, y, z, w, h)
 	self.z = z or 0
 	self.w = w or 0
 	self.h = h or 0
+	return self
 end
 
 --- Rounds the values of the rectangle, then returns it.

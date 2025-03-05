@@ -14,6 +14,8 @@ end
 --- @return Class  The object that was added.
 function Canvas:add(o)
 	if o then self.objects[#self.objects + 1] = o end
+	--print(#self.objects.. " objects in "..self._name)
+	--print(o._name)
 	return o
 end
 

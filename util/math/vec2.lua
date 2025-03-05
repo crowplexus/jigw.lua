@@ -8,7 +8,7 @@ function Vec2:__call(x, y) return self:new(x, y) end
 --- @param y? number  The y position.
 function Vec2:init(x, y)
 	self.x = x or 0
-	self.y = y or 0
+	self.y = y
 end
 
 --- Rounds the values of the vector, then returns it.
@@ -25,7 +25,7 @@ function Vec2:ceil() return self:new(math.ceil(self.x), math.ceil(self.y)) end
 
 --- Returns the values of the vector one by one.
 --- @return number, number
-function Vec2:unpack() return self.x or 0, self.y or 0 end
+function Vec2:unpack() return self.x or 0, self.y end
 
 --- Disposes of the vector and clears its values from memory.
 function Vec2:dispose()

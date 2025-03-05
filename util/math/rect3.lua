@@ -14,7 +14,7 @@ end
 --- @param d number
 function Rect3:init(x, y, z, w, h, d)
 	self.x = x or 0
-	self.y = y or 0
+	self.y = y
 	self.z = z or 0
 	self.w = w or 0
 	self.h = h or 0
@@ -44,7 +44,7 @@ end
 
 --- Returns the values in the rectangle one by one.
 --- @return number, number, number, number, number, number
-function Rect3:unpack() return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0, self.d or 0 end
+function Rect3:unpack() return self.x or 0, self.y, self.z or 0, self.w or 0, self.h or 0, self.d or 0 end
 
 --- Disposes of the rectangle and clears its values from memory.
 function Rect3:dispose()

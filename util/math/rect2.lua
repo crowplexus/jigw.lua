@@ -13,7 +13,7 @@ end
 --- @param h? number  The height.
 function Rect2:init(x, y, z, w, h)
 	self.x = x or 0
-	self.y = y or 0
+	self.y = y
 	self.z = z or 0
 	self.w = w or 0
 	self.h = h or 0
@@ -41,7 +41,7 @@ end
 
 --- Returns the values of the rectangle one by one.
 --- @return number, number, number, number, number
-function Rect2:unpack() return self.x or 0, self.y or 0, self.z or 0, self.w or 0, self.h or 0 end
+function Rect2:unpack() return self.x or 0, self.y, self.z or 0, self.w or 0, self.h or 0 end
 
 --- Gets rid of the rectangle and clears it from memory.
 function Rect2:dispose()

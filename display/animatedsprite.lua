@@ -16,7 +16,7 @@ function AnimatedSprite:init(x, y)
 	self.offset = Vec2(0, 0)        --- @type Vec2
 	self.scale = Vec2(1, 1)         --- @type Vec2
 	self.shear = Vec2(0, 0)         --- @type Vec2
-	self.color = {1, 1, 1, 1}       --- @type table<number>
+	self.tint = {1, 1, 1, 1}       --- @type table<number>
 	self.angle = 0                  --- @type number
 	self.centered = Enums.Axis.NONE --- @type number
 	self.animation = {
@@ -89,12 +89,12 @@ end
 function AnimatedSprite:draw()
 	if self.texture and self.visible then
 		love.graphics.push("all")
-		if self.color then love.graphics.setColor(self.color) end
+		if self.tint then love.graphics.setColor(self.tint) end
 		transform:reset()
-		local px, py = (self.position.x or 0) + (self.offset.x or 0), (self.position.y or 0) + (self.offset.y or 0)
+		local px, py = (self.position.x) + (self.offset.x), (self.position.y) + (self.offset.y)
 		transform:translate(px, py)
 		if self.animation.playing and self.animation.frame then
-			transform:translate(self.animation.offset.x or 0, self.animation.offset.y or 0) -- offset the animation
+			transform:translate(self.animation.offset.x, self.animation.offset.y) -- offset the animation
 			local frame = self.animation.frame
 			transform:rotate(self.angle + frame.angle) -- rotate frame
 			if frame.offset then -- offset frame
@@ -116,7 +116,7 @@ function AnimatedSprite:draw()
 		else
 			love.graphics.draw(self.texture, transform)
 		end
-		if self.color then love.graphics.setColor(1, 1, 1, 1) end
+		if self.tint then love.graphics.setColor(1, 1, 1, 1) end
 		love.graphics.pop()
 	end
 end
@@ -147,7 +147,7 @@ end
 function AnimatedSprite:addAnimationOffset(name, x, y)
 	local anim = self.animation.list[name]
 	self.animation.list[name].offset = {
-		x or anim.offset.x or 0, y or anim.offset.y or 0
+		x or anim.offset.x, y or anim.offset.y
 	}
 end
 

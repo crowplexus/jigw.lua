@@ -13,7 +13,7 @@ function Sprite:init(x, y)
 	self.scale = Vec2(1, 1)         --- @type Vec2
 	self.shear = Vec2(0, 0)         --- @type Vec2
 	self.centered = Enums.Axis.NONE --- @type number
-	self.color = { 1, 1, 1, 1 }     --- @type table<number>
+	self.tint = { 1, 1, 1, 1 }     --- @type table<number>
 	self.angle = 0                  --- @type number
 	return self
 end
@@ -27,14 +27,14 @@ end
 function Sprite:draw()
 	if self.texture and self.visible then
 		love.graphics.push("all")
-		if self.color then love.graphics.setColor(self.color) end
+		if self.tint then love.graphics.setColor(self.tint) end
 		transform:reset()
 		transform:translate(self.position:unpack())
 		transform:rotate(self.angle)
 		transform:scale(self.scale:unpack())
 		love.graphics.shear(self.shear:unpack())
 		love.graphics.draw(self.texture, transform)
-		if self.color then love.graphics.setColor(1, 1, 1, 1) end
+		if self.tint then love.graphics.setColor(1, 1, 1, 1) end
 		love.graphics.pop()
 	end
 end

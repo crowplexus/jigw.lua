@@ -1,3 +1,31 @@
+local PRIVATE_KEY, GETTER_KEY = "_", "get_"
+local RESERVED_KEYWORDS = {"new", "delete", "_name", "__index", "__newindex"}
+local function __getter(tbl, idx)
+	local getter = rawget(tbl, "get_" .. idx)
+	return getter and getter or tbl._super and __getter(tbl._super, idx) or nil
+end
+local function __setter(tbl, idx)
+	local setter = rawget(tbl, "set_" .. idx)
+	return setter and setter or tbl._super and  __setter(tbl._super, idx) or nil
+end
+-- Copies table A to B
+local function copyTbl(a, b)
+	local result = a or {}
+	local orig = b or {}
+	for k, v in pairs(orig) do
+		if not result[k] and not RESERVED_KEYWORDS[k] then
+			if type(v) == "table" then
+				result[k] = copyTbl(v)
+				--print("copied table "..k.. " from "..(orig._name or "Unknown(A)").." to "..(result._name or "Unknown(B)"))
+			else
+				result[k] = v
+				--print("copied value "..k.. " from "..(orig._name or "Unknown(A)").." to "..(result._name or "Unknown(B)"))
+			end
+		end
+	end
+	return result
+end
+
 --- Basic class system for lua
 --- @module engine.class
 ---
@@ -25,99 +53,75 @@
 ---     self.value = newvl
 --- end
 --- 
---- @author crowplexus AKA IamMorwen
+--- @author crowplexus, pisayesiwsi
 return function(name, base)
-	local function __gettersearch(self, idx)
-		local getter = rawget(self, "get_" .. idx)
-		return getter and getter or self.__super and
-				   __gettersearch(self.__super, idx) or nil
-	end
-	local function __settersearch(self, idx)
-		local setter = rawget(self, "set_" .. idx)
-		return setter and setter or self.__super and
-				   __settersearch(self.__super, idx) or nil
-	end
-
-	local o = {
-		__name = name or
-			("AnonymousClass(" .. (base and tostring(base) or "") .. ")"),
-		__callbacks = {},
-		__members = {},
-		__super = nil,
-		__id = 1
+	-- TODO: reimplement reference counting
+	base = base or {}
+	local obj = {
+		_name = name or ("AnonymousClass(" .. (base and tostring(base._name) or "") .. ")"),
+		_members = base._members or {},
+		_super = base._super or nil,
 	}
-
-	if type(base) == "table" then
-		for k, v in pairs(base.__members or {}) do
-			-- print("added " .. k .. " into " .. o.__name .. " from " .. base.__name)
-			o.__members[k] = v
-		end
-		for k, v in pairs(base.__callbacks or {}) do
-			-- print("added " .. k .. " into " .. o.__name .. " from " .. base.__name)
-			o.__callbacks[k] = v
-		end
-		o.__super = base
-	end
-
-	o.new = function(self, ...)
-		local instance = setmetatable({}, {__index = self})
-		if instance.init then instance:init(...) end
-		if instance then -- not "nil" by the time init gets called
-			-- print("created " .. self.__name .. "(" .. self.__id .. ")")
-			o.__id = o.__id + 1
-		end
-		return instance
-	end
-	o.delete = function(self)
-		if self.dispose then self:dispose() end
-		self.__id = self.__id - 1
-		setmetatable(self, nil)
-	end
-
-	local mt = setmetatable(o, {
-		__index = function(self, idx)
-			if string.sub(idx, 1, 2) == "__" or string.sub(idx, 1, 4) == "get_" then
-				return rawget(self, idx)
+	copyTbl(obj, base)
+	obj.new = function(tbl, ...) -- тbl
+		local wasInit = false
+		super = tbl
+		while not wasInit and super do -- safety check
+			if super.init then
+				super:init(...)
+				wasInit = true
+				break
 			end
-			local propgetter = __gettersearch(self, idx)
+			super = tbl._super
+		end
+		--[[if tbl then -- not "nil" by the time init gets called
+			--print("created " .. self._name .. "(ID:" .. self._id .. ")")
+			obj._id = obj._id + 1
+		end]]
+		return tbl
+	end
+	obj.delete = function(tbl)
+		if tbl.dispose then tbl:dispose() end
+		--obj._id = obj._id - 1
+		setmetatable(tbl, nil)
+	end
+	local meta = {
+		__index = function(tbl, idx)
+			if string.sub(idx, 1, 2) == PRIVATE_KEY or string.sub(idx, 1, 4) == GETTER_KEY then
+				return rawget(tbl, idx)
+			end
+			local propgetter = __getter(tbl, idx)
 			if propgetter then
 				print("calling " .. idx .. " getter")
-				local ismt = getmetatable(self)
-				return ismt and propgetter(self) or propgetter()
+				local ismt = getmetatable(tbl)
+				return ismt and propgetter(tbl) or propgetter()
 			else
-				return rawget(self.__members, idx) or
-						   rawget(self.__callbacks, idx) or
-						   (self.__super and rawget(self.__super, idx))
-
+				return rawget(tbl._members, idx) or (tbl._super and rawget(tbl._super, idx))
 			end
 		end,
-		__newindex = function(self, idx, val)
+		__newindex = function(tbl, idx, val)
 			if string.sub(idx, 1, 2) == "__" or string.sub(idx, 1, 4) == "set_" then
-				rawset(self, idx, val)
+				rawset(tbl, idx, val)
 				return
 			end
-			local propsetter = __settersearch(self, idx)
+			local propsetter = __setter(tbl, idx)
 			if propsetter then
 				print("calling " .. idx .. " setter")
-				local ismt = getmetatable(self)
+				local ismt = getmetatable(tbl)
 				if ismt then
-					propsetter(self, val)
+					propsetter(tbl, val)
 				else
 					propsetter(val)
 				end
 				return
 			end
-			if type(val) == "function" then
-				rawset(self.__callbacks, idx, val)
-			else
-				rawset(self.__members, idx, val)
-			end
+			rawset(tbl._members, idx, val)
 		end,
-		__tostring = function(self)
-			local id = "Instance: " .. self.__id
-			local nm = string.sub(self.__name, 0, #self.__name - 1)
-			return "Name: " .. nm .. tostring(base or "") .. ") - " .. id
-		end
-	})
-	return mt, base
+		__tostring = function(tbl)
+			local nm = string.sub(tbl._name, 0, #tbl._name)
+			return "Class \""..nm.."\""..(tbl._super and " Child of \""..tbl._super._name.."\"" or "")
+		end,
+	}
+	setmetatable(obj, mt)
+	return obj, base
 end

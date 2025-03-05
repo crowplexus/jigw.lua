@@ -16,7 +16,7 @@ function Screen:resize(w, h) end
 --- @param scancode string  The scancode of the key.
 --- @param isrepeat boolean  If the key is being held down.
 function Screen:keypressed(key, scancode, isrepeat)
-	if #self.objects == 0 then return end
+	if not self.objects or #self.objects == 0 then return end
 	local i = 1
 	while i <= #self.objects do
 		if self.objects[i].keypressed then
@@ -29,7 +29,7 @@ end
 --- Called when a key is released, only works if there are any objects on the screen.
 --- @param key string  The key released.
 function Screen:keyreleased(key)
-	if #self.objects == 0 then return end
+	if not self.objects or #self.objects == 0 then return end
 	local i = 1
 	while i <= #self.objects do
 		if self.objects[i].keyreleased then

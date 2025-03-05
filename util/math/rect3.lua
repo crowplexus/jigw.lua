@@ -14,7 +14,7 @@ end
 --- @param d number
 function Rect3:init(x, y, z, w, h, d)
 	self.x = x or 0
-	self.y = y
+	self.y = y or 0
 	self.z = z or 0
 	self.w = w or 0
 	self.h = h or 0

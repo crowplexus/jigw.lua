@@ -1,3 +1,5 @@
+-- TODO: maybe move worldCenter functions from objects to here?
+
 --- @class Vec2
 local Vec2 = Class("Vec2")
 
@@ -8,7 +10,7 @@ function Vec2:__call(x, y) return self:new(x, y) end
 --- @param y? number  The y position.
 function Vec2:init(x, y)
 	self.x = x or 0
-	self.y = y
+	self.y = y or 0
 end
 
 --- Rounds the values of the vector, then returns it.

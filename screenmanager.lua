@@ -29,8 +29,12 @@ function ScreenManager:switchScreen(path)
 		self.activeScreen = nil
 		_camera = nil
 	end
-	if type(path) == "string" then self.activeScreen = require(path):new()
-	else self.activeScreen = path end
+	if type(path) == "string" then
+		self.activeScreen = require(path)
+		if self.activeScreen then self.activeScreen:new() end
+	elseif type(path) == "userdata" then
+		self.activeScreen = path
+	end
 	if self.activeScreen then
 		self.activeScreen:enter()
 	else
